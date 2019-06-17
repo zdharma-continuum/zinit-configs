@@ -12,3 +12,8 @@ Use the Github search inerface – just enter a query e.g. "trapd00r/LS_COLORS" 
 Then, results should appaer like below:
 
 ![Search results](https://raw.githubusercontent.com/zdharma/zplugin-configs/img/srch-rslt.png)
+
+# The repository structure
+
+The structure of the repository is very simple: in its main directory there are directories located, named after the user-names of the submitting users. In those directories there are the zshrc files that the user decided to share.
+
