@@ -9,7 +9,7 @@ assignees: ''
 
 # URL
 
-<!-- If applictable, provide an URL pointing to the zshrc -->
+<!-- If applicable, provide an URL pointing to the zshrc -->
 
 # Username
 
@@ -21,4 +21,4 @@ assignees: ''
 # Paste here
 ```
 
-<!-- If applictable, paste the zshrc here -->
+<!-- If applicable, paste the zshrc here -->
