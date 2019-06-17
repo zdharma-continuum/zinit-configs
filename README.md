@@ -13,6 +13,13 @@ Then, results should appaer like below:
 
 ![Search results](https://raw.githubusercontent.com/zdharma/zplugin-configs/img/srch-rslt.png)
 
+# Submitting zshrc
+
+You can either:
+
+ - open a PR – fastest method
+ - submit an issue with URL to the zshrc (or with the zshrc pasted) – [a quick link](https://github.com/zdharma/zplugin-configs/issues/new?assignees=&labels=&template=request-to-add-zshrc-to-the-zplugin-configs-repo.md)
+
 # The repository structure
 
 The structure of the repository is very simple: in its main directory there are directories located, named after the user-names of the submitting users. In those directories there are the zshrc files that the user decided to share.
