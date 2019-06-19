@@ -278,7 +278,9 @@ zplugin snippet OMZ::plugins/git
 zplugin ice wait'0b' lucid atload'zsh-startify'
 zplugin load zdharma/zsh-startify
 
-zplugin ice wait'0c' lucid atclone"dircolors -b LS_COLORS > c.zsh" atpull'%atclone' pick"c.zsh" nocompile'!'
+# Note the `g' prefix to the tools – because I'm on OS X using
+# Homebrew installed coreutils
+zplugin ice wait'0c' lucid atclone"git reset --hard; gsed -i '/DIR/c\DIR                   38;5;63;1' LS_COLORS; gdircolors -b LS_COLORS > c.zsh" atpull'%atclone' pick"c.zsh" nocompile'!'
 zplugin light trapd00r/LS_COLORS
 
 zplugin ice wait"0" silent
