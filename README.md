@@ -5,6 +5,7 @@
 - [zplugin-configs](#zplugin-configs)
   - [Pull-requests welcomed!](#pull-requests-welcomed)
 - [Searching the repository](#searching-the-repository)
+  - [OR ...](#or-)
 - [Submitting zshrc](#submitting-zshrc)
 - [The repository structure](#the-repository-structure)
 
@@ -24,6 +25,10 @@ Use the Github search inerface – just enter a query e.g. "trapd00r/LS_COLORS" 
 Then, results should appaer like below:
 
 ![Search results](https://raw.githubusercontent.com/zdharma/zplugin-configs/img/srch-rslt.png)
+
+## OR ...
+
+just clone the repository and issue `ack`, `ag` or `grep` command :)
 
 # Submitting zshrc
 
