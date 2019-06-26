@@ -1,0 +1,219 @@
+#compdef _my my
+
+
+_my() {
+    local line
+
+    _arguments -C \
+        "-h[Show help information]" \
+        "--h[Show help information]" \
+        "1: :(show_installed \
+              disks \
+              current_layout_indicator \
+              i3_exit_menu \
+              fix_zsh_history \
+              random_reddit_image \
+              set_bg \
+              save_4chan_thread_imgs \
+              transfer \
+              most_used_commands \
+              history_hours_freq \
+              weather \
+              hr \
+              cclip \
+              screenshot \
+              serveo \
+              jqv \
+              curl_first_ok \
+              ip \
+              map \
+              speedtest \
+              graph_dependencies \
+              pastebin \
+              install_from_web \
+              install_package \
+              fullUpgrade \
+              check_dependencies \
+              dependencies \
+              allitebooks \
+              ijrnl \
+              fill_requirements_txt \
+            )" \
+        "*::arg:->args"
+
+    case $line[1] in
+        set_bg)
+            _set_bg
+        ;;
+        save_4chan_thread_imgs)
+            _save_4chan_thread_imgs
+        ;;
+        screenshot)
+            _screenshot
+        ;;
+        graph_dependencies)
+            _graph_dependencies
+        ;;
+        pastebin)
+            _pastebin
+        ;;
+        install_package)
+            _install_package
+        ;;
+        dependencies)
+            _dependencies
+        ;;
+    esac
+
+
+}
+
+
+_set_bg() {
+    local line
+
+    _arguments -C \
+        "1: :(disk reddit)" \
+        "*::arg:->args"
+
+    case $line[1] in
+        *)
+            _files -g "*.(jpg|jpeg|png)"
+        ;;
+    esac
+}
+
+
+_save_4chan_thread_imgs() {
+    local -a commands
+    IFS=$'\n' commands=($(
+        curl --silent 'http://www.4chan.org/' |
+            grep '^<li.*boardlink'            |  # filter list items with anchors leading to boards
+            sed -e 's|.*org/\(.*\)/"|\1|'     |  # cut everything before board name
+            sed -e 's|class="boardlink">||'   |  # remove unnecessary html
+            sed -e 's|</a></li>||'            |  # now we have a "a Anime &amp; Manga" kind of lines
+            sed -e 's|\ |:|'                  |  # fit autocompletion format command:description
+            sed -e 's|\&amp;|\&|'                # resolve ampersands
+    ))
+
+    if (( CURRENT == 2 )); then
+        _describe -t commands 'commands' commands
+    fi
+
+    local board
+    local html
+    local threads
+    local titles
+    if (( CURRENT == 3 )) &&
+        command -v hxnormalize >/dev/null 2>&1 &&  # require html-xml-utils
+        command -v hxselect >/dev/null 2>&1;       #
+    then
+        if [[ "${board}" != "${line[2]}" ]]; then
+            board="${line[2]}"
+            html=$(curl --silent --location "http://boards.4channel.org/${board}/")
+        threads=$(echo "${html}" | lynx -dump -nonumbers -listonly -stdin |
+            grep 'thread/[0-9]*$' | sed 's|.*thread/||g')
+        titles=$(echo "${html}" | hxnormalize -x | tr -d '\n' |
+            hxselect -c -s '\n' '.postInfo .subject')
+        IFS=$'\n' commands=($(
+            paste -d ':' <(echo "${threads}") <(echo "${titles}")
+        ))
+        fi
+        _describe -t commands 'commands' commands
+    fi
+
+
+    return 0
+}
+
+
+_screenshot() {
+    local -a commands
+    commands=(
+      'full:Shoot whole screen'
+      'select:Select an area with mouse to shoot'
+      'focused:Shoot focused window'
+    )
+
+    if (( CURRENT == 2 )); then
+      _describe -t commands 'commands' commands
+    fi
+
+    return 0
+}
+
+
+_graph_dependencies() {
+    local -a commands
+    commands=( $(dpkg --get-selections | sed 's/\t.*//') )
+
+    if (( CURRENT == 2 )); then
+      _describe -t commands 'commands' commands
+    fi
+
+    return 0
+}
+
+
+_pastebin() {
+    local line
+
+    _arguments -C \
+            "-h[Show help information]" \
+        "--help[Show help information]" \
+             "-x[Insert download URL into clipboard]" \
+        "--xclip[Insert download URL into clipboard]" \
+               "-e[Ecrypt file with GPG]" \
+        "--encrypt[Ecrypt file with GPG]" \
+        "*::arg:->args"
+
+    case $line[1] in
+        *)
+            _files
+        ;;
+    esac
+}
+
+
+_install_package() {
+    local -a commands
+    commands=(
+      'autobench:HTTP benchmark tool'
+      'remarkable:Markdown graphical editor'
+      'cgo:Console non-curses gopher client'
+      'tomb:Encrypt files'
+      'tor-browser:A tor browser from git releases'
+      'vte-ng:Enhanced vte terminal widget'
+      'dfc:Report file system space usage information'
+      'sent:Simple plaintext presentation tool'
+      'docker-compose:Tool for defining and running multi-container Docker applications'
+      'grv:Terminal interface for viewing git repositories'
+      'icecat:A GNU version of Firefox browser'
+    )
+
+    if (( CURRENT == 2 )); then
+      _describe -t commands 'commands' commands
+    fi
+
+    return 0
+}
+
+
+_dependencies() {
+    local -a commands
+    commands=(
+      'self:Dependencies found in current file'
+      'posix:POSIX utils'
+      'non-posix:Non-POSIX dependencies'
+      'check:Notify if some dependency is missing'
+    )
+
+    if (( CURRENT == 2 )); then
+      _describe -t commands 'commands' commands
+    fi
+
+    return 0
+}
+
+
+_my "$@"

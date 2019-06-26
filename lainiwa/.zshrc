@@ -40,6 +40,7 @@ export NVM_DIR="${HOME}/.nvm"
 #     nix package manager
 #     zsh settings
 #     command-not-found functionality
+#     python's virtualenvwrapper
 for file in "${NVM_DIR}/nvm.sh" \
             "${NVM_DIR}/bash_completion" \
             "${HOME}/.zsh/prompts.zsh" \
@@ -47,7 +48,8 @@ for file in "${NVM_DIR}/nvm.sh" \
             "${HOME}/.zsh/set_history.zsh" \
             "${HOME}/.zsh/zplugin.zsh" \
             "${HOME}/.zsh/completions.zsh" \
-            "${HOME}/.zsh/other/command-not-found.zsh"
+            "${HOME}/.zsh/other/command-not-found.zsh" \
+            "${HOME}/.local/bin/virtualenvwrapper_lazy.sh"
 do
     [ -s "${file}" ] && source "${file}"
 done
