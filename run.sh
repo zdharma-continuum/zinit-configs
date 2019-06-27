@@ -27,7 +27,7 @@ cat > "${0:a:h}/${DOCKERFILE}" <<END
 FROM ubuntu:18.04
 RUN apt update && \
     apt install --yes ncurses-dev unzip zsh git subversion curl build-essential python \
-                        vim htop sudo golang-go cmake 
+                        vim htop sudo golang-go cmake redis-server libhiredis-dev
 
 RUN adduser --disabled-password --gecos '' user
 RUN adduser user sudo
@@ -40,7 +40,10 @@ COPY --chown=user ${FOLDER} /home/user
 # Conditional copy of a possible .zshrc named differently
 COPY --chown=user ${FOLDER}/zshrc.zsh* /home/user/.zshrc
 
-RUN TERM=${TERM} SHELL=/bin/zsh zsh -i -c -- '-zplg-scheduler burst || true'
+# For zdharma/zredis
+RUN sudo mkdir -p usr/local/var/db/redis
+
+RUN SHELL=/bin/zsh TERM=${TERM} zsh -i -c -- '-zplg-scheduler burst || true'
 CMD zsh
 END
 

@@ -1,0 +1,6 @@
+# DESC: Adds /opt/local/bin to $PATH
+
+optlbin_off
+PATH=/opt/local/bin:$PATH
+
+# vim:ft=zsh:et

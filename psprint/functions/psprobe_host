@@ -1,0 +1,14 @@
+# DESC: Checks "$1" is alive, outputs also timestamp
+
+while (( 1 )); do
+    command nmap --max-rtt-timeout 1250ms --host-timeout 100000ms --initial-rtt-timeout 600ms \
+                 --max-retries 3 -sP "$1" | command grep -i "1 host up" > /dev/null
+    if (( ! $? )); then
+        builtin print -r -- $fg_bold[green]UP$reset_color"   - "$(date);
+    else
+        builtin print -r -- $fg_bold[yellow]DOWN$reset_color" - "$(date);
+    fi
+    command sleep 1
+done
+
+# vim:ft=zsh:et

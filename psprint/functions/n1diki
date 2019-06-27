@@ -1,0 +1,6 @@
+# DESC: Queries diki.pl with $@ (w3m)
+
+search=`echo "$1+$2+$3+$4+$5+$6+$7+$8+$9" | sed 's:\+*$::'`
+w3m www.diki.pl/slownik-angielskiego/"?q=$search"
+
+# vim:ft=zsh:et

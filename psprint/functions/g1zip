@@ -1,0 +1,8 @@
+# DESC: Creates `basename $(pwd)`-$(date ...) archive
+
+local f=`basename $(pwd)`-`date +%Y%m%d`
+command rm -vf "$f".zip
+command git archive --output "$f".zip --prefix "$f/" master
+command du "$f".zip
+
+# vim:ft=zsh:et

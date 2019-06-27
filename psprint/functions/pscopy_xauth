@@ -1,0 +1,10 @@
+# DESC: Copies xauth data to "$1" at "$2"
+
+local idx
+
+for idx in 0 1; do
+    builtin print -- 'mac:'$idx to "$1"@"$2"..
+    command xauth nextract - 'mac:'$idx | command ssh "$1"@"$2" xauth nmerge -
+done
+
+# vim:ft=zsh:et

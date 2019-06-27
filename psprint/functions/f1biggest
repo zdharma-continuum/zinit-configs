@@ -1,0 +1,9 @@
+# DESC: Size-sorts all descent files - finds biggest ones
+
+find 2>/dev/null . -type f -ls |
+    sed -e "s/[[:blank:]][[:blank:]]*/ /g" -e 's/^ //' |
+    cut -d" " -f 7,11- | sort -nr | head -25 |
+    awk "{ printf \"%6d\", int( \$1/1048576 ); print \" MiB   \" \$2 \" \" \$3 \" \" \$4 \" \" \$5 \" \" \$6 \" \" \$7 \" \" \$8 \" \" \$9 \" \" \$10 \" \" \$11 \" \" \$12 }" |
+    sed -e "s:MiB   \./:MiB   :" -e "s:\\\ : :g"
+
+# vim:ft=zsh:et

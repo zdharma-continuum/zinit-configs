@@ -1,0 +1,10 @@
+# DESC: Recompiles ~/.zshrc, ~/.zcompdump
+
+autoload -Uz zrecompile
+[[ -f ~/.zshrc ]] && zrecompile -p ~/.zshrc
+[[ -f ~/.zcompdump ]] && zrecompile -p ~/.zcompdump
+[[ -f ~/.zcompdump ]] && zrecompile -p ~/.zcompdump
+[[ -f ~/.zshrc.zwc.old ]] && command rm -f ~/.zshrc.zwc.old
+[[ -f ~/.zcompdump.zwc.old ]] && command rm -f ~/.zcompdump.zwc.old
+
+# vim:ft=zsh:et

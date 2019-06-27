@@ -1,0 +1,15 @@
+# DESC: Converts hex-triplet into terminal color index
+
+local hex r g b
+
+hex=${${1#"#"}#0x}
+
+r="0x${hex[1,2]:-0}"
+g="0x${hex[3,4]:-0}"
+b="0x${hex[5,6]:-0}"
+
+val=$(printf -- '%03d\n' "$(( (r<75?0:(r-35)/40)*6*6 +
+                (g<75?0:(g-35)/40)*6 +
+                (b<75?0:(b-35)/40) + 16 ))" | tee >(pbcopy))
+print -- "\e\[48\;5\;${val#0}m\e\[30m${val} TEST"
+# vim:ft=zsh:et

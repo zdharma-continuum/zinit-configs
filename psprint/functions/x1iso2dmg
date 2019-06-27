@@ -1,0 +1,5 @@
+# DESC: Converts file $1 (iso) to ${1:r}.dmg
+
+hdiutil convert -format UDRW -o "${1%.iso}".dmg "${1}"
+
+# vim:ft=zsh:et

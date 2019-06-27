@@ -1,0 +1,6 @@
+# DESC: Removes /opt/local/{bin,sbin} from $PATH
+
+path=( "${path[@]:#/opt/local/bin}" )
+path=( "${path[@]:#/opt/local/sbin}" )
+
+# vim:ft=zsh:et
