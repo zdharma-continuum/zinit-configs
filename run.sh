@@ -37,8 +37,8 @@ USER user
 RUN sh -c "\$(curl -fsSL https://raw.githubusercontent.com/zdharma/zplugin/master/doc/install.sh)"
 
 COPY --chown=user ${FOLDER} /home/user
-# Conditional copy of a possible .zshrc named differently
-COPY --chown=user ${FOLDER}/zshrc.zsh* /home/user/.zshrc
+# Copy of a possible .zshrc named according to a non-leading-dot scheme
+RUN cp -vf /home/user/zshrc.zsh /home/user/.zshrc 2>/dev/null || true
 
 # For zdharma/zredis
 RUN sudo mkdir -p usr/local/var/db/redis
