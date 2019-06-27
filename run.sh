@@ -6,7 +6,7 @@ set -o nounset   # exit on undeclared variable
 # set -o xtrace    # trace execution
 
 # Folders containing `.zshrc`
-FOLDERS_WITH_ZSHRC=$(cd "${0:a:h}"; find * -name '.zshrc' -type f -exec dirname {} \;)
+FOLDERS_WITH_ZSHRC=$(cd "${0:a:h}"; find * \( -name .zshrc -o -name zshrc.zsh \) -type f -exec dirname {} \;)
 
 # A fuzzy finder available
 if command -v fzy > /dev/null; then
@@ -26,7 +26,8 @@ DOCKERFILE="Dockerfile"
 cat > "${0:a:h}/${DOCKERFILE}" <<END
 FROM ubuntu:18.04
 RUN apt update && \
-    apt install --yes zsh git subversion curl build-essential python vim htop sudo
+    apt install --yes ncurses-dev unzip zsh git subversion curl build-essential python \
+                        vim htop sudo golang-go cmake 
 
 RUN adduser --disabled-password --gecos '' user
 RUN adduser user sudo
@@ -36,12 +37,15 @@ USER user
 RUN sh -c "\$(curl -fsSL https://raw.githubusercontent.com/zdharma/zplugin/master/doc/install.sh)"
 
 COPY --chown=user ${FOLDER} /home/user
-RUN TERM=${TERM} zsh -i -c -- '-zplg-scheduler burst || true'
+# Conditional copy of a possible .zshrc named differently
+COPY --chown=user ${FOLDER}/zshrc.zsh* /home/user/.zshrc
+
+RUN TERM=${TERM} SHELL=/bin/zsh zsh -i -c -- '-zplg-scheduler burst || true'
 CMD zsh
 END
 
 # Build an image
-FOLDER_LOWERCASE=$(tr '[A-Z]' '[a-z]' <<< ${FOLDER})
+FOLDER_LOWERCASE="${(L)FOLDER}"
 docker build -t "zplg-configs/${FOLDER_LOWERCASE}" "${0:a:h}"
 
 # Run a container

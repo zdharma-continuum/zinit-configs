@@ -328,9 +328,6 @@ zplugin load zdharma/zui
 zplugin ice wait'[[ -n ${ZLAST_COMMANDS[(r)cras*]} ]]' lucid
 zplugin load zdharma/zplugin-crasis
 
-zplugin ice wait'0' lucid
-zplugin load ~/gitlab/zsh-tag-search.git
-
 zplugin ice wait"2" lucid
 zplugin load voronkovich/gitignore.plugin.zsh
 
@@ -342,6 +339,10 @@ zplugin load zdharma/fast-syntax-highlighting
 
 zplugin ice wait"1" from:gl lucid
 zplugin load psprint/fsh-auto-themes
+
+# ogham/exa, replacement for ls
+zplugin ice from"gh-r" as"command" mv"exa* -> exa" wait'2' lucid
+zplugin light ogham/exa
 
 # vramsteg
 zplugin ice wait"2" lucid as'command' pick'src/vramsteg' atclone'cmake .' atpull'%atclone' make
