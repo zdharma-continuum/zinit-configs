@@ -16,9 +16,9 @@ zflai-assert() { mylogs+=( "$4"${${${1:#$2}:+FAIL}:-OK}": $3" ); }
 }
 
 if [[ -x /usr/bin/dircolors ]]; then
-    typeset -g DIRCPATH="/usr/bin/dircolors"
+    typeset -g DIRCPATH="/usr/bin/dircolors -b"
 elif [[ -x /usr/local/bin/dircolors ]]; then
-    typeset -g DIRCPATH="/usr/local/bin/dircolors"
+    typeset -g DIRCPATH="/usr/local/bin/dircolors -b"
 else
     typeset -g DIRCPATH="/usr/bin/false"
 fi
@@ -252,7 +252,7 @@ zstyle ':notify:*' notifier /Users/sgniazdowski/.zplugin/plugins/zdharma---zconv
 palette() { local colors; for n in {000..255}; do colors+=("%F{$n}$n%f"); done; print -cP $colors; }
 
 # Run redis-server port forwarding, from the public 3333 port
-n1ssl_rtunnel 3333 localhost 4815 zredis.pem zredis_client.crt &!
+#n1ssl_rtunnel 3333 localhost 4815 zredis.pem zredis_client.crt &!
 zflai-msg "[zshrc] ssl tunnel PID: $!"
 
 #
@@ -278,9 +278,7 @@ zplugin snippet OMZ::plugins/git
 zplugin ice wait'0b' lucid atload'zsh-startify'
 zplugin load zdharma/zsh-startify
 
-# Note the `g' prefix to the tools – because I'm on OS X using
-# Homebrew installed coreutils
-zplugin ice wait'0c' lucid atclone"git reset --hard; gsed -i '/DIR/c\DIR                   38;5;63;1' LS_COLORS; gdircolors -b LS_COLORS > c.zsh" atpull'%atclone' pick"c.zsh" nocompile'!'
+zplugin ice wait'0c' lucid atclone"git reset --hard; sed -i '/DIR/c\DIR                   38;5;63;1' LS_COLORS; dircolors -b LS_COLORS > c.zsh" atpull'%atclone' pick"c.zsh" nocompile'!'
 zplugin light trapd00r/LS_COLORS
 
 zplugin ice wait"0" silent
@@ -289,6 +287,7 @@ zplugin load zdharma/zconvey
 zplugin ice pick"cmds/zc-bg-notify" as"command" wait"0" id-as'zconvey-cmd' silent
 zplugin load zdharma/zconvey
 
+zstyle ":plugin:zredis" configure_opts "--without-tcsetpgrp"
 zplugin ice wait'1' atload'ztie -d db/redis -a 127.0.0.1:4815/5 -P $HOME/.zredisconf -zSL main rdhash' lucid
 zplugin load zdharma/zredis
 zplugin ice service"redis" lucid wait"1"
@@ -366,7 +365,7 @@ zplugin ice wait"2" lucid as"program" atclone'perl Makefile.PL PREFIX=$ZPFX' atp
 zplugin load k4rthik/git-cal
 
 # git-url
-zplugin ice wait"2" lucid as"program" pick"$ZPFX/bin/git-(url|guclone)" make"install PREFIX=$ZPFX"
+zplugin ice wait"2" atinit"export NO_CGITURL=1" lucid as"program" pick"$ZPFX/bin/git-(url|guclone)" make"install PREFIX=$ZPFX"
 zplugin load zdharma/git-url
 
 # git-recall
