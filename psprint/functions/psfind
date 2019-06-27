@@ -1,0 +1,9 @@
+# DESC: Queries mdfind by kMDItemDisplayName; supports -i (case insensitive search)
+# vim:ft=zsh:et:sw=4:sts=4
+
+if [ $1 = "-i" ]; then
+    shift 
+    mdfind "kMDItemDisplayName == '$@'c"
+else
+    mdfind "kMDItemDisplayName == $@"
+fi

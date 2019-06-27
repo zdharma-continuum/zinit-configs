@@ -1,0 +1,14 @@
+# DESC: Iterates over *.git directories, runs git "$@"
+
+# Foreach *.git directory
+local PAUSE=0 i
+for i in *.git; do
+    builtin echo -e "\n$i\n"
+    LANG=C command sleep $PAUSE
+    builtin cd -q "$i"
+    command git "$@"
+    builtin cd -q ..
+    PAUSE="0.5"
+done
+
+# vim:ft=zsh:et

@@ -1,0 +1,19 @@
+# DESC: `ls` or `ls -A`, depending on [[ -d .git ]]
+
+[[ "$PWD" != "${PWD%Dropbox*}" ]] && echo -e '\x1b[5m<Dropbox>\x1b[0m'
+if [[ ! -d _darcs && ! -d .git ]]; then
+    # Normal
+    command ls "$@"
+    return
+fi
+
+if [[ "$PWD" = "$HOME" ]]; then
+    # In $HOME - still normal
+    command ls "$@"
+    return
+fi
+
+# Full listing if in a git/darcs repository
+command ls -A "$@"
+
+# vim:ft=zsh:et

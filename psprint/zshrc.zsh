@@ -4,7 +4,7 @@
 
 module_path+=("$HOME/.zplugin/bin/zmodules/Src"); zmodload zdharma/zplugin
 
-typeset -g HISTSIZE=290000 SAVEHIST=290000 HISTFILE=~/.zhistory ABSD=1
+typeset -g HISTSIZE=290000 SAVEHIST=290000 HISTFILE=~/.zhistory ABSD=${${(M)OSTYPE:#*(darwin|bsd)*}:+1}
 
 typeset -ga mylogs
 zflai-msg() { mylogs+=( "$1" ); }
@@ -14,22 +14,6 @@ zflai-assert() { mylogs+=( "$4"${${${1:#$2}:+FAIL}:-OK}": $3" ); }
     export LSCOLORS=dxfxcxdxbxegedabagacad CLICOLOR="1" 
     export ANDROID_ROOT=/opt/android
 }
-
-if [[ -x /usr/bin/dircolors ]]; then
-    typeset -g DIRCPATH="/usr/bin/dircolors"
-elif [[ -x /usr/local/bin/dircolors ]]; then
-    typeset -g DIRCPATH="/usr/local/bin/dircolors"
-else
-    typeset -g DIRCPATH="/usr/bin/false"
-fi
-
-if [[ -f /etc/DIR_COLORS ]]; then
-    builtin eval `$DIRCPATH -b /etc/DIR_COLORS`
-    zflai-msg "[zshrc] dircolors at $DIRCPATH, using /etc/DIR_COLORS"
-else
-    builtin eval `$DIRCPATH`
-    zflai-msg "[zshrc] dircolors at $DIRCPATH, no DIR_COLORS file"
-fi
 
 export EDITOR="vim" LESS="-iRFX" CVS_RSH="ssh"
 
@@ -252,7 +236,7 @@ zstyle ':notify:*' notifier /Users/sgniazdowski/.zplugin/plugins/zdharma---zconv
 palette() { local colors; for n in {000..255}; do colors+=("%F{$n}$n%f"); done; print -cP $colors; }
 
 # Run redis-server port forwarding, from the public 3333 port
-n1ssl_rtunnel 3333 localhost 4815 zredis.pem zredis_client.crt &!
+#n1ssl_rtunnel 3333 localhost 4815 zredis.pem zredis_client.crt &!
 zflai-msg "[zshrc] ssl tunnel PID: $!"
 
 #
@@ -265,86 +249,132 @@ source "$HOME/.zplugin/bin/zplugin.zsh"
 autoload -Uz _zplugin
 (( ${+_comps} )) && _comps[zplugin]=_zplugin
 
-repeat 1; do
-
+# Assign each zsh session an unique ID, available in
+# ZUID_ID and also a codename (ZUID_CODENAME)
 zplugin load zdharma/zsh-unique-id
 
+# Loaded mostly to stay in touch with the plugin (for the users)
+# and for the themes 2 & 3 (lambda-mod-zsh-theme & lambda-gitster)
 zplugin ice wait"0" lucid
 zplugin snippet OMZ::lib/git.zsh
 
-zplugin ice wait"0" svn atload"unalias grv g" lucid
-zplugin snippet OMZ::plugins/git
+# Loaded mostly to stay in touch with the plugin (for the users)
+zplugin ice wait"0" atload"unalias grv g" lucid
+zplugin snippet OMZ::plugins/git/git.plugin.zsh
 
+# zsh-startify, a vim-startify -like plugin
 zplugin ice wait'0b' lucid atload'zsh-startify'
 zplugin load zdharma/zsh-startify
 
-# Note the `g' prefix to the tools – because I'm on OS X using
-# Homebrew installed coreutils
-zplugin ice wait'0c' lucid atclone"git reset --hard; gsed -i '/DIR/c\DIR                   38;5;63;1' LS_COLORS; gdircolors -b LS_COLORS > c.zsh" atpull'%atclone' pick"c.zsh" nocompile'!'
+# On OSX, you might need to install coreutils from homebrew and use the
+# g-prefix – gsed, gdircolors
+zplugin ice wait'0c' lucid \
+    atclone"git reset --hard; sed -i \
+            '/DIR/c\DIR                   38;5;63;1' LS_COLORS; \
+            dircolors -b LS_COLORS > c.zsh" \
+            atpull'%atclone' pick"c.zsh" nocompile'!'
 zplugin light trapd00r/LS_COLORS
 
+# Zconvey shell integration plugin
 zplugin ice wait"0" silent
 zplugin load zdharma/zconvey
 
+# Another load of the same plugin, to add zc-bg-notify to PATH
 zplugin ice pick"cmds/zc-bg-notify" as"command" wait"0" id-as'zconvey-cmd' silent
 zplugin load zdharma/zconvey
 
-zplugin ice wait'1' atload'ztie -d db/redis -a 127.0.0.1:4815/5 -P $HOME/.zredisconf -zSL main rdhash' lucid
+# zredis together with some binding/tying
+zstyle ":plugin:zredis" configure_opts "--without-tcsetpgrp"
+zstyle ":plugin:zredis" cflags  "-Wall -O2 -g -Wno-unused-but-set-variable"
+zplugin ice wait'1' atload'ztie -d db/redis -a 127.0.0.1:4815/5 -zSL main rdhash' lucid
 zplugin load zdharma/zredis
+
+# a service that runs the redis database, in background, single instance
 zplugin ice service"redis" lucid wait"1"
 zplugin light zservices/redis
 
+# zsh-editing-workbench & zsh-navigation-tools
 zplugin ice wait"0" lucid
 zplugin load psprint/zsh-editing-workbench
 zplugin ice wait"0" lucid
 zplugin load psprint/zsh-navigation-tools   # for n-history
 
+# zdharma/history-search-multi-word
 zstyle ":history-search-multi-word" page-size "11"
 zplugin ice wait"1" lucid
 zplugin load zdharma/history-search-multi-word
 
+# Github-Issue-Tracker – the notifier thread
+zplugin ice lucid id-as'GitHub-notify' \
+        ice on-update-of'$~/.cache/zsh-github-issues/new_titles.log' \
+        notify'New issue: $NOTIFY_MESSAGE'
+zplugin light zdharma/zsh-github-issues
+
+# Github-Issue-Tracker – the issue-puller thread
+GIT_PROJECTS=zdharma/zsh-github-issues:zdharma/zplugin
+
+zplugin ice service"GIT" pick"zsh-github-issues.service.zsh" wait'2' lucid
+zplugin light zdharma/zsh-github-issues
+
+# Theme no. 1 - zprompts
 zplugin ice load'![[ $MYPROMPT = 1 ]]' unload'![[ $MYPROMPT != 1 ]]' atload'!promptinit; typeset -g PSSHORT=0; prompt sprint3' lucid
 zplugin load psprint/zprompts
+
+# Theme no. 2 – lambda-mod-zsh-theme
 zplugin ice load'![[ $MYPROMPT = 2 ]]' unload'![[ $MYPROMPT != 2 ]]' lucid
 zplugin load halfo/lambda-mod-zsh-theme
+
+# Theme no. 3 – lambda-gitster
 zplugin ice load'![[ $MYPROMPT = 3 ]]' unload'![[ $MYPROMPT != 3 ]]' lucid
 zplugin load ergenekonyigit/lambda-gitster
 
+# Theme no. 4 – pure
 GEOMETRY_COLOR_DIR=63 GEOMETRY_PATH_COLOR=63
 zplugin ice load'![[ $MYPROMPT = 4 ]]' unload'![[ $MYPROMPT != 4 ]]' atload"prompt_geometry_render" lucid
 zplugin load geometry-zsh/geometry
-#zplugin ice load'![[ $MYPROMPT = 4 ]]' unload'![[ $MYPROMPT != 4 ]]' atload"geometry::clear_title; geometry::prompt; geometry::rprompt" lucid # ver"mnml"
-#zplugin load jedahan/geometry
 
+# Theme no. 5 – pure
 zplugin ice ice load'![[ $MYPROMPT = 5 ]]' unload'![[ $MYPROMPT != 5 ]]' \
-             multisrc"{async,pure}.zsh" pick"/dev/null" idas"my/pure/login"; zplugin load sindresorhus/pure
+             multisrc"{async,pure}.zsh" pick"/dev/null" idas"my/pure/login"
+zplugin load sindresorhus/pure
 
+# Theme no. 6 - agkozak-zsh-theme
 AGKOZAK_FORCE_ASYNC_METHOD=subst-async
 zplugin ice ice load'![[ $MYPROMPT = 6 ]]' unload'![[ $MYPROMPT != 6 ]]' lucid
 zplugin load agkozak/agkozak-zsh-theme
 
+# Theme no. 7 - zinc
+zplugin ice load'![[ $MYPROMPT = 7 ]]' unload'![[ $MYPROMPT != 7 ]]' \
+    nocompletions atclone'prompt_zinc_compile' atpull'%atclone' \
+    compile"{zinc_functions/*,segments/*,zinc.zsh}" atload'zinc_selfdestruct_setup'
+zplugin load robobenklein/zinc
+
+# ZUI and Crasis
 zplugin ice wait"1" lucid
 zplugin load zdharma/zui
 zplugin ice wait'[[ -n ${ZLAST_COMMANDS[(r)cras*]} ]]' lucid
 zplugin load zdharma/zplugin-crasis
 
-zplugin ice wait'0' lucid
-zplugin load ~/gitlab/zsh-tag-search.git
-
+# Gitignore plugin – commands gii and gi
 zplugin ice wait"2" lucid
 zplugin load voronkovich/gitignore.plugin.zsh
 
-#ZSH_AUTOSUGGEST_USE_ASYNC=1
+# Autosuggestions & fast-syntax-highlighting
 zplugin ice wait"0" atload"_zsh_autosuggest_start" lucid
 zplugin load zsh-users/zsh-autosuggestions
-zplugin ice wait"1" atinit"ZPLGM[COMPINIT_OPTS]=-C; zpcompinit; zpcdreplay" zatinit"FAST_WORK_DIRS=XDG; zpcompinit; zpcdreplay" lucid
+zplugin ice wait"1" atinit"ZPLGM[COMPINIT_OPTS]=-C; zpcompinit; zpcdreplay" lucid
 zplugin load zdharma/fast-syntax-highlighting
 
 zplugin ice wait"1" from:gl lucid
 zplugin load psprint/fsh-auto-themes
 
+# ogham/exa, replacement for ls
+zplugin ice from"gh-r" as"command" mv"exa* -> exa" wait'2' lucid
+zplugin light ogham/exa
+
 # vramsteg
-zplugin ice wait"2" lucid as'command' pick'src/vramsteg' atclone'cmake .' atpull'%atclone' make
+zplugin ice wait"2" lucid as'command' pick'src/vramsteg' \
+            atclone'cmake .' atpull'%atclone' make
 zplugin load psprint/vramsteg-zsh
 
 # zsh-diff-so-fancy
@@ -360,12 +390,12 @@ zplugin ice wait"2" lucid as"program" pick"$ZPFX/bin/git-alias" make"PREFIX=$ZPF
 zplugin load tj/git-extras
 
 # git-cal
-zplugin ice wait"2" lucid as"program" atclone'perl Makefile.PL PREFIX=$ZPFX' atpull'%atclone' \
-            make'install' pick"$ZPFX/bin/git-cal"
+zplugin ice wait"2" lucid as"program" atclone'perl Makefile.PL PREFIX=$ZPFX' \
+    atpull'%atclone' make'install' pick"$ZPFX/bin/git-cal"
 zplugin load k4rthik/git-cal
 
 # git-url
-zplugin ice wait"2" lucid as"program" pick"$ZPFX/bin/git-(url|guclone)" make"install PREFIX=$ZPFX"
+zplugin ice wait"2" lucid as"program" pick"$ZPFX/bin/git-(url|guclone)" make"install PREFIX=$ZPFX GITURL_NO_CGITURL=1"
 zplugin load zdharma/git-url
 
 # git-recall
@@ -385,8 +415,6 @@ zplugin load Fakerr/git-recall
 zflai-msg "[zshrc] Zplugin block took ${(M)$(( SECONDS * 1000 ))#*.?} ms"
 
 MYPROMPT=1
-
-done
 
 #
 # Zstyles & other

@@ -1,0 +1,9 @@
+# DESC: Converts (ffmpeg) file $1 to $2, or $1 to ${1:r}.mp4
+
+if [[ "$2" != "" ]]; then
+    command ffmpeg -i "$1" -qscale 0 "$2"
+else
+    command ffmpeg -i "$1" -qscale 0 "${1:r}.mp4"
+fi
+
+# vim:ft=zsh:et

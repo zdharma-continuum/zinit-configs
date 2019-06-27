@@ -1,0 +1,31 @@
+# DESC: Wait "$1" seconds for Ctrl-C (animated progress bar)
+
+setopt localtraps
+
+trap "return 1" INT TERM QUIT
+
+# Invoke e.g. t1countdown test && print "Progress bar available"
+[[ "$1" = "test" ]] && return $(( 1 - ${+commands[vramsteg]} ))
+
+(( ${+commands[vramsteg]} )) || {
+    builtin print -r -- "Please install tool \`vramsteg' to use \`t1countdown' function"
+    builtin print -r -- "Installation with Zplugin:"
+    builtin print -r -- "  zplugin ice as'command' pick'src/vramsteg' atclone'cmake .' atpull'%atclone' make"
+    builtin print -r -- "  zplugin light psprint/vramsteg-zsh"
+    return 2
+}
+
+local START=$(vramsteg --now) pause_len="$1"
+integer cnt
+
+for (( cnt = 0; cnt <= pause_len * 7 - 1; ++ cnt )); do
+    command vramsteg --label "Abort?" --min 0 --max $(( pause_len * 7 - 1 )) \
+            --current "$cnt" --start "$START" --elapsed --percentage
+    LANG=C sleep 0.142
+done
+
+command vramsteg --remove
+
+return 0
+
+# vim:ft=zsh:et

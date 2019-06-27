@@ -1,0 +1,113 @@
+# A function that displays given text surrounding it with
+# horizontal-rules (the `bars') with given color and using
+# given bar-character. The main point is:
+# - one can passs colorized text (ANSI escape sequences), and
+#   it will not disturb the output (i.e. it will not confuse
+#   the bars' lengths)
+# - one can pass the same options as to `print' builtin - the
+#   options are fully parsed and separated from the `private'
+#   options of the acc_print
+# - acc_print will not print unless --print option given - the
+#   main result of the funcction is then input text lenght (
+#   resilient to the ANSI escapes) in `REPLY', and complete print
+#   arguments in `reply' (so that user can do: print "${reply[@]}"
+#
+#   Options --dbg --bar-above --bar-below --both-bars --print --bar-char:
+#   --bar-color: are mostly self-explaining. The --bar-color is an escape
+#   string (e.g. taken from $fg[blue]). The colon : denotes options that
+#   require an argument. --dbg will show some information on the acc_print
+#   state and operation.
+#
+#   The prefix acc_* comes from accumulation, i.e. following use case is
+#   possible:
+#
+#   acc_print -n "Test$fg[yellow]MSG$reset_color"
+#   acc_print "${reply[@]}" "\nLength of the above message: $REPLY"
+#   acc_print "${reply[@]}" "\nFinished::)\n" --print
+#
+#   By passing the $reply from previous call one accumulates multiple
+#   prints. The last one does the whole aggregated data displying, by
+#   obeying the --print option. The effect:
+#
+#     TestMSG
+#     Length of the above message: 7
+#     Finished::)
+#
+#   One problem - above example will wrongly print the bars, with e.g.
+#   --both-bars passed, because it will have the length of the sum of
+#   all 3 strings lengths. A workaround:
+#
+#   integer prev max
+#   acc_print -n "Test$fg[yellow]MSG$reset_color"
+#   prev=$REPLY max=$REPLY
+#   acc_print "${reply[@]}" "\nLength of the above message: $REPLY"
+#   max=$(( max = (REPLY-prev) > max ? REPLY-prev : max ))
+#   prev+=REPLY
+#   acc_print "${reply[@]}" "\nFinished::)\n"
+#   max=$(( max = (REPLY-prev) > max ? REPLY-prev : max ))
+#   print -- ${(l:max::-:):-}
+#   acc_print "${reply[@]}" --print
+#   print -- ${(l:max::-:):-}
+#
+#   Other problem: escape sequences like \n \r etc. should be also
+#   ignored in the length returned by REPLY (if not using -r print
+#   option).
+#
+acc_print() {
+        setopt localoptions extendedglob typesetsilent warncreateglobal
+	local -A opthash
+	local -a optarray
+        integer pdebug
+
+        # The ${^...} (with additional s-flag, i.e. the s::) will expand every
+        # splitted sequence of elements to append the =optarg to them. Thus,
+        # there will be a semi-separation of storage of the non-argument options
+        # (landing in both `optarray' and `opthash') and of the with-argument
+        # options (landing only in the hash `opthash'.
+        # Note: (s::) splits on every character.
+
+        local -a private_opts
+        private_opts=( --dbg --bar-above --bar-below --both-bars --print --bar-char: --bar-color: )
+        # ${(s::)^:-abcDilmnNoOpPrsSzRe}=optarray will expand to each character
+        # (the split on null string does this, s::) with =optarray appended (the
+        # ^ does this).
+	zparseopts -E -D -A opthash ${(s::)^:-abcDilmnNoOpPrsSzRe}=optarray u: f: C: v: x: X: ${private_opts[@]#-} || \
+	{ builtin print -r -- "Bad options given to the internal \`acc_print' function, aborting the function call"; return 1; }
+
+        # 1st return value: length of the string without escape codes
+	local input="${(j: :)@}"
+	input="${input//$'\x1b'\[[0-9;]##m/}"
+	typeset -g REPLY=${#input}
+
+        # arg_keys - the keys in the opthash that belong to the with-value
+        # options. Basically, :# means "filter out from array",
+        # ${(~j:|:)optarray[@]]] means: connect all elements via alternative
+        # - so this :# and a|b|c filters-out non-argument options from the
+        # opthash (plus also the private_opts, i.e. non print-options
+	local -a arg_keys
+        arg_keys=( ${(k)opthash[@]:#(${(~j:|:)optarray[@]}|${(~j:|:)private_opts%:})} )
+	
+        # Some debug messages to enable (by reoving the colon)
+        (( ${+opthash[--dbg]} )) && {
+            builtin print -r -- OPTION-HASH '(ALL OPTIONS)': ${(q-kv)opthash[@]}
+            builtin print -r -- OPTION-ARRAY '(NON-ARGUMENT OPTIONS)': "${(q-)optarray[@]}"
+            builtin print -r -- ARGUMENT-ONLY-OPTIONS: "${(kv@)opthash[(I)(${(~j:|:)arg_keys[@]})]}"
+
+            builtin print
+	    builtin print -r -- "The command to be run in case of --print option:"
+            builtin print -r -- print "${(kv@)opthash[(I)(${(~j:|:)arg_keys[@]})]}" \
+                "${optarray[@]}" "${(q-)@}"
+        }
+
+        # 2nd return value: the complete arguments for the print builtin
+        typeset -ga reply
+        reply=( "${(kv@)opthash[(I)(${(~j:|:)arg_keys[@]})]}" "${optarray[@]}" "$@" )
+
+        local bar_char="${opthash[--bar-char]:--}"
+        (( ${+opthash[--bar-above]} + ${+opthash[--both-bars]} )) && \
+            print -- "${opthash[--bar-color]:-}${(pl:REPLY::$bar_char:):-}${opthash[--bar-color]:+$reset_color}"
+        (( ${+opthash[--print]} )) && builtin print "${(kv@)opthash[(I)(${(~j:|:)arg_keys[@]})]}" "${optarray[@]}" "$@"
+        (( ${+opthash[--bar-below]} + ${+opthash[--both-bars]} )) && \
+            print -- "${opthash[--bar-color]:-}${(pl:REPLY::$bar_char:):-}${opthash[--bar-color]:+$reset_color}"
+}
+# vim:ft=zsh:et:wrap:sw=4:sts=4

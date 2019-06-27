@@ -1,0 +1,5 @@
+# DESC: Finds files changed in last "$1" minutes
+
+find . -newerct "$1 minute ago" -print
+
+# vim:ft=zsh:et

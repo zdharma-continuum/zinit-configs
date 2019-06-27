@@ -1,0 +1,5 @@
+# DESC: A setopt wrapper with tracing to /tmp/setopt.log
+print -r - "$funcfiletrace[1]: $0 ${(q-)@}" >>! /tmp/setopt.log
+builtin $0 "$@"
+
+# vim:ft=zsh:et
