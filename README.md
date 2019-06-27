@@ -55,7 +55,6 @@ zplugin ice as"command" make"\!PREFIX=$ZPFX install" \
 zplugin load jhawthorn/fzy
 
 # Then, install this repo
-zplugin ice cloneopts'--branch feature-run --single-branch'
 zplugin load zdharma/zplugin-configs
 
 # Run the command
