@@ -335,12 +335,19 @@ zplugin load geometry-zsh/geometry
 
 # Theme no. 5 – pure
 zplugin ice ice load'![[ $MYPROMPT = 5 ]]' unload'![[ $MYPROMPT != 5 ]]' \
-             multisrc"{async,pure}.zsh" pick"/dev/null" idas"my/pure/login"; zplugin load sindresorhus/pure
+             multisrc"{async,pure}.zsh" pick"/dev/null" idas"my/pure/login"
+zplugin load sindresorhus/pure
 
 # Theme no. 6 - agkozak-zsh-theme
 AGKOZAK_FORCE_ASYNC_METHOD=subst-async
 zplugin ice ice load'![[ $MYPROMPT = 6 ]]' unload'![[ $MYPROMPT != 6 ]]' lucid
 zplugin load agkozak/agkozak-zsh-theme
+
+# Theme no. 7 - zinc
+zplugin ice load'![[ $MYPROMPT = 7 ]]' unload'![[ $MYPROMPT != 7 ]]' \
+    nocompletions atclone'prompt_zinc_compile' atpull'%atclone' \
+    compile"{zinc_functions/*,segments/*,zinc.zsh}" atload'zinc_selfdestruct_setup'
+zplugin load robobenklein/zinc
 
 # ZUI and Crasis
 zplugin ice wait"1" lucid
