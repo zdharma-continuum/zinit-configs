@@ -365,8 +365,10 @@ zplugin load zsh-users/zsh-autosuggestions
 zplugin ice wait"1" atinit"ZPLGM[COMPINIT_OPTS]=-C; zpcompinit; zpcdreplay" lucid
 zplugin load zdharma/fast-syntax-highlighting
 
-zplugin ice wait"1" from:gl lucid
-zplugin load psprint/fsh-auto-themes
+# Disabled - as the user probably doesn't have access to this plugin
+# that's only available to the patreon.com Patrons
+: zplugin ice wait"1" from:gl lucid
+: zplugin load psprint/fsh-auto-themes
 
 # ogham/exa, replacement for ls
 zplugin ice from"gh-r" as"command" mv"exa* -> exa" wait'2' lucid
