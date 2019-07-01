@@ -280,8 +280,22 @@ zplugin ice wait"0" silent
 zplugin load zdharma/zconvey
 
 # Another load of the same plugin, to add zc-bg-notify to PATH
-zplugin ice pick"cmds/zc-bg-notify" as"command" wait"0" id-as'zconvey-cmd' silent
+zplugin ice pick"cmds/zc-bg-notify" as"command" wait"1" id-as'zconvey-cmd' silent
 zplugin load zdharma/zconvey
+
+# fzy
+zplugin ice wait'1' lucid as"command" make"!PREFIX=$ZPFX install" \
+    atclone"cp contrib/fzy-* $ZPFX/bin/" \
+    pick"$ZPFX/bin/fzy*"
+zplugin light jhawthorn/fzy
+
+# fzf, for fzf-marks
+zplugin ice wait'0' lucid as"command" from"gh-r"
+zplugin light junegunn/fzf-bin
+
+# fzf-marks, at slot 0, for quick Ctrl-G accessibility
+zplugin ice wait'0' lucid
+zplugin load urbainvaes/fzf-marks
 
 # zredis together with some binding/tying
 zstyle ":plugin:zredis" configure_opts "--without-tcsetpgrp"
