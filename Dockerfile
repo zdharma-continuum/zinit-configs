@@ -4,7 +4,7 @@ FROM ubuntu:18.04
 ARG DEBIAN_FRONTEND=noninteractive
 RUN apt update && \
     apt install -yq \
-        ncurses-dev unzip zsh git subversion curl make sudo locales \
+        ncurses-dev telnet unzip zsh git subversion curl make sudo locales \
         python golang-go \
         vim htop
 
