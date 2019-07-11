@@ -198,7 +198,8 @@ autoload -Uz psprobe_host   psffconv    pssetup_ssl_cert    psrecompile    pscop
              t1uncolor 	    t1fromhex   t1countdown \
              f1rechg_x_min  f1biggest \
              n1gglinks      n1dict      n1diki              n1gglinks      n1ggw3m         n1ling  n1ssl_tunnel \
-	     n1ssl_rtunnel
+	     n1ssl_rtunnel  \
+             pngimage       deploy-code
 
 function run_diso {
   sh -c "$@" &
@@ -255,13 +256,12 @@ zplugin load zdharma/zsh-unique-id
 
 # Loaded mostly to stay in touch with the plugin (for the users)
 # and for the themes 2 & 3 (lambda-mod-zsh-theme & lambda-gitster)
-zplugin ice wait"0" lucid
+zplugin ice wait lucid
 zplugin snippet OMZ::lib/git.zsh
 
 # Loaded mostly to stay in touch with the plugin (for the users)
-zplugin ice wait"0" atload"unalias grv g" lucid
+zplugin ice wait atload"unalias grv g" lucid
 zplugin snippet OMZ::plugins/git/git.plugin.zsh
-
 # zsh-startify, a vim-startify -like plugin
 zplugin ice wait'0b' lucid atload'zsh-startify'
 zplugin load zdharma/zsh-startify
@@ -276,8 +276,12 @@ zplugin ice wait'0c' lucid \
 zplugin light trapd00r/LS_COLORS
 
 # Zconvey shell integration plugin
-zplugin ice wait"0" silent
+zplugin ice wait silent
 zplugin load zdharma/zconvey
+
+# z-plugin (a Zplugin extension) which allows to explicitly clone submodules
+zplugin ice wait lucid
+zplugin light zdharma/z-p-submods
 
 # Another load of the same plugin, to add zc-bg-notify to PATH
 zplugin ice pick"cmds/zc-bg-notify" as"command" wait"1" id-as'zconvey-cmd' silent
@@ -290,11 +294,11 @@ zplugin ice wait'1' lucid as"command" make"!PREFIX=$ZPFX install" \
 zplugin light jhawthorn/fzy
 
 # fzf, for fzf-marks
-zplugin ice wait'0' lucid as"command" from"gh-r"
+zplugin ice wait lucid as"command" from"gh-r"
 zplugin light junegunn/fzf-bin
 
 # fzf-marks, at slot 0, for quick Ctrl-G accessibility
-zplugin ice wait'0' lucid
+zplugin ice wait lucid
 zplugin load urbainvaes/fzf-marks
 
 # zredis together with some binding/tying
@@ -308,9 +312,9 @@ zplugin ice service"redis" lucid wait"1"
 zplugin light zservices/redis
 
 # zsh-editing-workbench & zsh-navigation-tools
-zplugin ice wait"0" lucid
+zplugin ice wait'1' lucid
 zplugin load psprint/zsh-editing-workbench
-zplugin ice wait"0" lucid
+zplugin ice wait'1' lucid
 zplugin load psprint/zsh-navigation-tools   # for n-history
 
 # zdharma/history-search-multi-word
@@ -320,11 +324,12 @@ zplugin load zdharma/history-search-multi-word
 
 # Github-Issue-Tracker – the notifier thread
 zplugin ice lucid id-as'GitHub-notify' \
-        ice on-update-of'$~/.cache/zsh-github-issues/new_titles.log' \
+        ice on-update-of'~/.cache/zsh-github-issues/new_titles.log' \
         notify'New issue: $NOTIFY_MESSAGE'
 zplugin light zdharma/zsh-github-issues
 
 # Github-Issue-Tracker – the issue-puller thread
+GIT_SLEEP_TIME=700
 GIT_PROJECTS=zdharma/zsh-github-issues:zdharma/zplugin
 
 zplugin ice service"GIT" pick"zsh-github-issues.service.zsh" wait'2' lucid
@@ -374,10 +379,10 @@ zplugin ice wait"2" lucid
 zplugin load voronkovich/gitignore.plugin.zsh
 
 # Autosuggestions & fast-syntax-highlighting
-zplugin ice wait"0" atload"_zsh_autosuggest_start" lucid
-zplugin load zsh-users/zsh-autosuggestions
+zplugin ice wait"0c" atload"_zsh_autosuggest_start" lucid
+zplugin light zsh-users/zsh-autosuggestions
 zplugin ice wait"1" atinit"ZPLGM[COMPINIT_OPTS]=-C; zpcompinit; zpcdreplay" lucid
-zplugin load zdharma/fast-syntax-highlighting
+zplugin light zdharma/fast-syntax-highlighting
 
 # Disabled - as the user probably doesn't have access to this plugin
 # that's only available to the patreon.com Patrons
@@ -385,7 +390,7 @@ zplugin load zdharma/fast-syntax-highlighting
 : zplugin load psprint/fsh-auto-themes
 
 # ogham/exa, replacement for ls
-zplugin ice from"gh-r" as"command" mv"exa* -> exa" wait'2' lucid
+zplugin ice  wait'2' lucid from"gh-r" as"command" mv"exa* -> exa"
 zplugin light ogham/exa
 
 # vramsteg
@@ -418,9 +423,19 @@ zplugin load zdharma/git-url
 zplugin ice wait"3" lucid pick"git-recall" as"command"
 zplugin load Fakerr/git-recall
 
-: zplugin ice wait"0" blockf lucid
+# git-quick-stats
+zplugin ice wait"3" lucid make"PREFIX=$ZPFX install" as"command" \
+    pick"$ZPFX/bin/git-quick-stats" \
+    atload"export _MENU_THEME=legacy"
+zplugin load arzzen/git-quick-stats.git
+
+# zsh-tag-search
+zplugin ice wait lucid bindmap'^R -> ^G'
+zplugin load ~/gitlab/zsh-tag-search.git
+
+: zplugin ice wait blockf lucid
 : zplugin light marzocchi/zsh-notify
-: zplugin ice wait"0" lucid
+: zplugin ice wait lucid
 : zplugin light rimraf/k
 : zplugin light zsh-users/zsh-syntax-highlighting
 : zplugin ice load'![[ $PWD = */github/* ]]' unload'![[ $PWD != */github/* ]]'
@@ -447,7 +462,7 @@ zstyle ":completion:*:descriptions" format "%B%d%b"
 zstyle ':completion:*:*:*:default' menu yes select search
 zstyle ":completion:*" list-colors “${(s.:.)LS_COLORS}”
 
-function double-accept { accept-line; accept-line; }
+function double-accept { deploy-code "BUFFER[-1]=''"; }
 zle -N double-accept
 bindkey -M menuselect '^F' history-incremental-search-forward
 bindkey -M menuselect '^R' history-incremental-search-backward
