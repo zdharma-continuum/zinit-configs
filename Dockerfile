@@ -46,4 +46,4 @@ ARG TERM
 ENV TERM ${TERM}
 RUN SHELL=/bin/zsh zsh -i -c -- '-zplg-scheduler burst || true'
 
-CMD zsh
+CMD zsh -i -l
