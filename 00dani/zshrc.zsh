@@ -32,4 +32,5 @@ zplugin ice silent wait:1; zplugin $load mollifier/cd-gitroot
 zplugin ice silent wait:1; zplugin $load micha/resty
 zplugin ice silent wait:1; zplugin $load supercrabtree/k
 
-zplugin ice silent wait!1; zplugin $load zdharma/fast-syntax-highlighting
+zplugin ice silent wait!1 atload"ZPLGM[COMPINIT_OPTS]=-C; zpcompinit"
+zplugin $load zdharma/fast-syntax-highlighting
