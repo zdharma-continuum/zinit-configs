@@ -4,8 +4,8 @@ FROM ubuntu:18.04
 ARG DEBIAN_FRONTEND=noninteractive
 RUN apt update && \
     apt install -yq \
-        ncurses-dev telnet unzip zsh git subversion curl make sudo locales \
-        python golang-go \
+        ncurses-dev man telnet unzip zsh git subversion curl make sudo locales \
+        autoconf automake python golang-go \
         vim htop
 
 # Set the locale
