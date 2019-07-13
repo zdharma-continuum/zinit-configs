@@ -22,10 +22,6 @@ RUN adduser --disabled-password --gecos '' user         && \
     usermod --shell /bin/zsh user
 USER user
 
-# Install Rust language
-RUN curl 'https://sh.rustup.rs' -sSf | sh -s -- -y  && \
-    echo 'source ${HOME}/.cargo/env' > /home/user/.zshenv
-
 # Install zplugin
 RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/zdharma/zplugin/master/doc/install.sh)"
 
@@ -34,6 +30,10 @@ ARG FOLDER
 COPY --chown=user "${FOLDER}" /home/user
 # Copy of a possible .zshrc named according to a non-leading-dot scheme
 RUN cp -vf /home/user/zshrc.zsh /home/user/.zshrc 2>/dev/null || true
+
+# Install Rust language - currently unneeded
+#RUN curl 'https://sh.rustup.rs' -sSf | sh -s -- -y  && \
+#    echo 'source ${HOME}/.cargo/env' >>! /home/user/.zshenv
 
 # Run user's bootstrap script
 RUN if [ -f /home/user/bootstrap.sh ]; then \
