@@ -92,7 +92,8 @@ zle -N self-insert url-quote-magic
 #
 
 alias pl='print -rl --'
-alias ls="exa -bh ${${${ABSD#0}:+-G}:---color=auto}"
+#alias ls="gls -bh --color=auto"
+alias ls="exa -bh --color=auto"
 alias l="ls"      l.='ls -d .*'   la='ls -a'   ll='ls -lbt created'  rm='command rm -i'
 alias df='df -h'  du='du -h'      cp='cp -v'   mv='mv -v'      plast="last -20"
 alias reload="exec $SHELL -l -i"  grep="command grep --colour=auto"
@@ -199,7 +200,7 @@ autoload -Uz psprobe_host   psffconv    pssetup_ssl_cert    psrecompile    pscop
              f1rechg_x_min  f1biggest \
              n1gglinks      n1dict      n1diki              n1gglinks      n1ggw3m         n1ling  n1ssl_tunnel \
 	     n1ssl_rtunnel  \
-             pngimage       deploy-code
+             pngimage       deploy-code deploy-message
 
 function run_diso {
   sh -c "$@" &
@@ -263,16 +264,17 @@ zplugin snippet OMZ::lib/git.zsh
 zplugin ice wait atload"unalias grv g" lucid
 zplugin snippet OMZ::plugins/git/git.plugin.zsh
 # zsh-startify, a vim-startify -like plugin
-zplugin ice wait'0b' lucid atload'zsh-startify'
-zplugin load zdharma/zsh-startify
+: zplugin ice wait'0b' lucid atload'zsh-startify'
+: zplugin load zdharma/zsh-startify
 
-# On OSX, you might need to install coreutils from homebrew and use the
-# g-prefix – gsed, gdircolors
+# On OSX, you might need to install `coreutils' from homebrew
 zplugin ice wait'0c' lucid \
-    atclone"git reset --hard; sed -i \
+    atclone"local PFX=${${(M)OSTYPE:#*darwin*}:+g}
+            git reset --hard; \${PFX}sed -i \
             '/DIR/c\DIR                   38;5;63;1' LS_COLORS; \
-            dircolors -b LS_COLORS > c.zsh" \
-            atpull'%atclone' pick"c.zsh" nocompile'!'
+            \${PFX}dircolors -b LS_COLORS > c.zsh" \
+            atpull'%atclone' pick"c.zsh" nocompile'!' \
+            atload'zstyle ":completion:*" list-colors “${(s.:.)LS_COLORS}”'
 zplugin light trapd00r/LS_COLORS
 
 # Zconvey shell integration plugin
@@ -460,7 +462,7 @@ zstyle ':completion:*:*:kill:*' menu yes select
 zstyle ':completion:*:kill:*'   force-list always
 zstyle ":completion:*:descriptions" format "%B%d%b"
 zstyle ':completion:*:*:*:default' menu yes select search
-zstyle ":completion:*" list-colors “${(s.:.)LS_COLORS}”
+#zstyle ":completion:*" list-colors “${(s.:.)LS_COLORS}”
 
 function double-accept { deploy-code "BUFFER[-1]=''"; }
 zle -N double-accept
