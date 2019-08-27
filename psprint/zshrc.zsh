@@ -212,7 +212,7 @@ function pbcopydir {
 }
 
 function from-where {
-    echo $^fpath/$_comps[$1](N.)
+    echo $^fpath/$_comps[$1](N)
     whence -v $_comps[$1]
     #which $_comps[$1] 2>&1 | head
 }
@@ -292,9 +292,9 @@ zplugin ice wait silent as"program" id-as"zconvey-cmd" pick"cmds/zc-bg-notify"
 zplugin load zdharma/zconvey
 
 # fzy
-zplugin ice wait"1" lucid as"program" make"!PREFIX=$ZPFX install" \
+zplugin ice wait"1" lucid as"program" pick"$ZPFX/bin/fzy*" \
     atclone"cp contrib/fzy-* $ZPFX/bin/" \
-    pick"$ZPFX/bin/fzy*"
+    make"!PREFIX=$ZPFX install"
 zplugin light jhawthorn/fzy
 
 # fzf, for fzf-marks
@@ -312,7 +312,8 @@ zplugin load hlissner/zsh-autopair
 # zredis together with some binding/tying
 zstyle ":plugin:zredis" configure_opts "--without-tcsetpgrp"
 zstyle ":plugin:zredis" cflags  "-Wall -O2 -g -Wno-unused-but-set-variable"
-zplugin ice wait"1" lucid atload'ztie -d db/redis -a 127.0.0.1:4815/5 -P $HOME/.zredisconf -zSL main rdhash'
+zplugin ice wait"1" lucid \
+    atload'ztie -d db/redis -a 127.0.0.1:4815/5 -P $HOME/.zredisconf -zSL main rdhash'
 zplugin load zdharma/zredis
 
 # a service that runs the redis database, in background, single instance
@@ -332,7 +333,7 @@ zplugin load zdharma/history-search-multi-word
 
 # Github-Issue-Tracker – the notifier thread
 zplugin ice lucid id-as"GitHub-notify" \
-        ice on-update-of'~/.cache/zsh-github-issues/new_titles.log' \
+        on-update-of'~/.cache/zsh-github-issues/new_titles.log' \
         notify'New issue: $NOTIFY_MESSAGE'
 zplugin light zdharma/zsh-github-issues
 
@@ -344,7 +345,8 @@ zplugin ice wait"2" lucid service"GIT" pick"zsh-github-issues.service.zsh"
 zplugin light zdharma/zsh-github-issues
 
 # Theme no. 1 - zprompts
-zplugin ice lucid load'![[ $MYPROMPT = 1 ]]' unload'![[ $MYPROMPT != 1 ]]' atload'!promptinit; typeset -g PSSHORT=0; prompt sprint3'
+zplugin ice lucid load'![[ $MYPROMPT = 1 ]]' unload'![[ $MYPROMPT != 1 ]]' \
+    atload'!promptinit; typeset -g PSSHORT=0; prompt sprint3'
 zplugin load psprint/zprompts
 
 # Theme no. 2 – lambda-mod-zsh-theme
@@ -355,14 +357,15 @@ zplugin load halfo/lambda-mod-zsh-theme
 zplugin ice lucid load'![[ $MYPROMPT = 3 ]]' unload'![[ $MYPROMPT != 3 ]]'
 zplugin load ergenekonyigit/lambda-gitster
 
-# Theme no. 4 – pure
+# Theme no. 4 – geometry
 GEOMETRY_COLOR_DIR=63 GEOMETRY_PATH_COLOR=63
-zplugin ice lucid load'![[ $MYPROMPT = 4 ]]' unload'![[ $MYPROMPT != 4 ]]' atload"prompt_geometry_render"
+zplugin ice lucid load'![[ $MYPROMPT = 4 ]]' unload'![[ $MYPROMPT != 4 ]]' \
+    atload"prompt_geometry_render"
 zplugin load geometry-zsh/geometry
 
 # Theme no. 5 – pure
 zplugin ice load'![[ $MYPROMPT = 5 ]]' unload'![[ $MYPROMPT != 5 ]]' \
-             multisrc"{async,pure}.zsh" pick"/dev/null" idas"my/pure/login"
+    pick"/dev/null" multisrc"{async,pure}.zsh"
 zplugin load sindresorhus/pure
 
 # Theme no. 6 - agkozak-zsh-theme
@@ -372,10 +375,15 @@ zplugin load agkozak/agkozak-zsh-theme
 
 # Theme no. 7 - zinc
 zplugin ice load'![[ $MYPROMPT = 7 ]]' unload'![[ $MYPROMPT != 7 ]]' \
-    nocompletions atclone'prompt_zinc_compile' atpull'%atclone' \
-    compile"{zinc_functions/*,segments/*,zinc.zsh}" atload'zinc_selfdestruct_setup'
+    atclone'prompt_zinc_compile' atload'zinc_selfdestruct_setup' \
+    atpull'%atclone' compile"{zinc_functions/*,segments/*,zinc.zsh}" \
+    nocompletions wrap-track'prompt_zinc_setup'
 zplugin load robobenklein/zinc
 
+# Theme no. 8 - powerlevel10k
+zplugin ice load'![[ $MYPROMPT = 8 ]]' unload'![[ $MYPROMPT != 8 ]]' \
+    atload'source ~/.p10k.zsh; _p9k_precmd' lucid nocd wrap-track"_p9k_precmd"
+zplugin load romkatv/powerlevel10k
 # ZUI and Crasis
 zplugin ice wait"1" lucid
 zplugin load zdharma/zui
@@ -387,13 +395,14 @@ zplugin ice wait"2" lucid
 zplugin load voronkovich/gitignore.plugin.zsh
 
 # Autosuggestions & fast-syntax-highlighting
-zplugin ice wait"0c" lucid atload"_zsh_autosuggest_start"
-zplugin light zsh-users/zsh-autosuggestions
+zplugin ice wait"1b" lucid atload"_zsh_autosuggest_start" \
+    wrap-track"_zsh_autosuggest_start"
+zplugin load zsh-users/zsh-autosuggestions
 zplugin ice wait"1" lucid atinit"ZPLGM[COMPINIT_OPTS]=-C; zpcompinit; zpcdreplay"
 zplugin light zdharma/fast-syntax-highlighting
 
-zplugin ice wait"1" lucid from"gl"
-zplugin load psprint/fsh-auto-themes
+#zplugin ice wait"1" lucid from"gl" from"psprint@gitlab.com"
+#zplugin load psprint/fsh-auto-themes
 
 # ogham/exa, replacement for ls
 zplugin ice wait"2" lucid from"gh-r" as"program" mv"exa* -> exa"
@@ -411,7 +420,7 @@ zplugin load psprint/revolver
 # zunit
 zplugin ice wait"2" lucid as"program" pick"zunit" \
             atclone"./build.zsh" atpull"%atclone"
-zplugin load psprint/zunit
+zplugin load molovo/zunit
 
 # declare-zshrc
 zplugin ice wait"2" lucid
@@ -421,8 +430,12 @@ zplugin load zdharma/declare-zshrc
 zplugin ice wait"2" lucid as"program" pick"bin/git-dsf"
 zplugin load zdharma/zsh-diff-so-fancy
 
+# forgit
+zplugin ice wait'2' lucid
+zplugin load 'wfxr/forgit' 
+
 # git-now
-zplugin ice wait"2" lucid as"program" pick"$ZPFX/bin/git-now" make"prefix=$ZPFX install"
+zplugin ice wait"2" lucid as"program" pick"$ZPFX/bin/git-now" make"PREFIX=$ZPFX install"
 zplugin load iwata/git-now
 
 # git-extras
@@ -473,7 +486,7 @@ MYPROMPT=1
 zle -N znt-kill-widget
 bindkey "^Y" znt-kill-widget
 
-cdpath=( "$HOME/github" "$HOME/github2" "$HOME/gitlab" )
+cdpath=( "$HOME" "$HOME/github" "$HOME/github2" "$HOME/gitlab" )
 
 zstyle ':completion:*:*:kill:*' menu yes select
 zstyle ':completion:*:kill:*'   force-list always
