@@ -1,0 +1,29 @@
+# This Zshell function will execute the given code from a Zle context.
+# It has an optional delay first argument: "@sleep:<secnods with fractions>".
+# If given, then the code will wait in background before being executed, for
+# the specified amount of time.
+# The limit of the code length is 25 lines and can be easily extended by
+# changing the "repeat 25" line
+#
+# Usage:
+# deploy-code "echo Hello world"
+# deploy-code "BUFFER[-1]=''"
+# deploy-code  @sleep:5.5 "BUFFER='The time has passed, sorry for replacing your command line ;)'"
+[[ "$1" = <-> && ${#} -eq 1 ]] && {
+    local alltext text IFS=$'\n' nl=$'\n'
+    repeat 25; do read -r -u"$1" text; alltext+="${text:+$text$nl}"; done
+    zle -F "$1"; exec {1}<&-
+    eval "$alltext"
+    return 0
+}
+local THEFD
+exec {THEFD} < <(
+    # The expansion is: if there is @sleep: pfx, then use what is after
+    # it, otherwise substitute 0
+    LANG=C sleep $(( 0.005 + ${${${(M)1#@sleep:}:+${1#@sleep:}}:-0} ))
+    print -r -- ${1:#(@code|@sleep:*)} "${@[2,-1]}"
+)
+zle -N deploy-code # idempotent
+zle -w -F "$THEFD" deploy-code
+
+# vim;ft=zsh:sts=4:sw=4:et

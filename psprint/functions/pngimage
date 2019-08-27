@@ -1,0 +1,11 @@
+[[ -z "$1" ]] && {
+    print -r -- "Missing argument – the output image name (path)"
+    return 1
+}
+
+print -r -- pngquant ~"/Desktop/$( cd ~/Desktop; recently_changed_x 10 | sort -n | tail -1 )"
+pngquant ~"/Desktop/$( cd ~/Desktop; recently_changed_x 10 | sort -n | tail -1 )"
+print -r -- pngcrush ~"/Desktop/$( cd ~/Desktop; recently_changed_x 10 | grep -- -fs8 | sort -n | tail -1 )" "$1"
+pngcrush ~"/Desktop/$( cd ~/Desktop; recently_changed_x 10 | grep -- -fs8 | sort -n | tail -1 )" "$1"
+
+# vim:ft=zsh:sts=4:ts=4:et

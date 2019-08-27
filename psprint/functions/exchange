@@ -1,0 +1,8 @@
+[[ ! -e "$1" || ! -e "$2" ]] && { print -r -- "The args do not exist"; return 1; }
+
+local suffix=$(( RANDOM % 10000 ))
+mv -vf "$1" "$1"_"$suffix"
+mv -vf "$2" "$1"
+mv -vf "$1"_"$suffix" "$2"
+
+# vim:ft=zsh:et:sts=4:sw=4:wrap
