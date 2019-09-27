@@ -26,7 +26,8 @@ autoload -Uz _zpcompinit_fast auto-ls-colorls auto-ls-modecheck dotscheck histor
 # Functions to make configuration less verbose
 zt() { zplugin ice wait"${1}" lucid               "${@:2}"; } # Turbo
 zi() { zplugin ice lucid                            "${@}"; } # Regular Ice
-z()  { [ -z $2 ] && zplugin light "${@}" || zplugin "${@}"; } # zplugin
+z()  { [ -z $2 ] && { zplugin light "${@}"; ((1)); } || zplugin "${@}"; } # zplugin
+
 
 # Theme
 zi pick'spaceship.zsh' compile'{lib/*,sections/*,tests/*.zsh}' atload'source $ZPLGM[HOME_DIR]/user/theme'
