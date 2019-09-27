@@ -31,9 +31,9 @@ COPY --chown=user "${FOLDER}" /home/user
 # Copy of a possible .zshrc named according to a non-leading-dot scheme
 RUN cp -vf /home/user/zshrc.zsh /home/user/.zshrc 2>/dev/null || true
 
-# Install Rust language - currently unneeded
-#RUN curl 'https://sh.rustup.rs' -sSf | sh -s -- -y  && \
-#    echo 'source ${HOME}/.cargo/env' >>! /home/user/.zshenv
+# Install Rust language
+RUN curl 'https://sh.rustup.rs' -sSf | sh -s -- -y  && \
+    echo 'source ${HOME}/.cargo/env' >>! /home/user/.zshenv
 
 # Run user's bootstrap script
 RUN if [ -f /home/user/bootstrap.sh ]; then \
@@ -44,6 +44,7 @@ RUN if [ -f /home/user/bootstrap.sh ]; then \
 # Install all plugins
 ARG TERM
 ENV TERM ${TERM}
-RUN SHELL=/bin/zsh zsh -i -c -- '-zplg-scheduler burst || true'
+RUN SHELL=/bin/zsh zsh -i -c -- 'zplugin module build; -zplg-scheduler burst || true '
 
 CMD zsh -i -l
+
