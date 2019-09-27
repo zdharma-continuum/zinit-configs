@@ -33,7 +33,7 @@ RUN cp -vf /home/user/zshrc.zsh /home/user/.zshrc 2>/dev/null || true
 
 # Install Rust language
 RUN curl 'https://sh.rustup.rs' -sSf | sh -s -- -y  && \
-    echo 'source ${HOME}/.cargo/env' >>! /home/user/.zshenv
+    echo 'source ${HOME}/.cargo/env' >> /home/user/.zshenv
 
 # Run user's bootstrap script
 RUN if [ -f /home/user/bootstrap.sh ]; then \
