@@ -1,6 +1,5 @@
 #!/usr/bin/env zsh
 
-sudo apt install --yes cmake redis-server libhiredis-dev \
 sudo DEBIAN_FRONTEND=noninteractive apt install --yes cmake redis-server libhiredis-dev \
                         tree gem
 

@@ -262,7 +262,7 @@ autoload -Uz _zplugin
 
 # annex (a Zplugin extension) that generates man pages
 # for all plugins and snippets
-zplugin light zplugin/z-a-man
+#zplugin light zplugin/z-a-man
 # annex (a Zplugin extension) that runs tests for all
 # plugins and snippets
 zplugin light zplugin/z-a-test
@@ -454,7 +454,7 @@ zplugin ice wait"2" lucid from"gh-r" mv"exa* -> exa" sbin"exa" fbin"exa"
 zplugin light ogham/exa
 
 # sharkdp/fd
-zplugin ice from"gh-r" mv"fd* -> fd" sbin"fd/fd" fbin"fd/fd"
+zplugin ice wait"2" lucid from"gh-r" mv"fd* -> fd" sbin"fd/fd" fbin"fd/fd"
 zplugin light sharkdp/fd
 
 # vramsteg
@@ -476,12 +476,14 @@ zplugin ice wait"2" lucid
 zplugin load zdharma/declare-zshrc
 
 # zsh-diff-so-fancy
-zplugin ice wait"2" lucid sbin"bin/git-dsf" fbin"bin/git-dsf" pick"/dev/null"
+zplugin ice wait"2" lucid sbin"bin/git-dsf" fbin"bin/git-dsf" \
+    sbin"bin/diff-so-fancy" fbin"bin/diff-so-fancy" \
+    pick"/dev/null"
 zplugin load zdharma/zsh-diff-so-fancy
 
 # forgit
 zplugin ice wait'2' lucid
-zplugin load 'wfxr/forgit' 
+zplugin load wfxr/forgit
 
 # git-now
 zplugin ice wait"2" lucid as"program" pick"$ZPFX/bin/git-now" make"PREFIX=$ZPFX install"
@@ -510,18 +512,29 @@ zplugin ice wait"3" lucid as"program" make"PREFIX=$ZPFX install" \
     atload"export _MENU_THEME=legacy"
 zplugin load arzzen/git-quick-stats.git
 
+# fbterm
+zplugin ice \
+    as"command" pick"$ZPFX/bin/fbterm" \
+    dl"https://bugs.archlinux.org/task/46860?getfile=13513 -> ins.patch" \
+    dl"https://aur.archlinux.org/cgit/aur.git/plain/0001-Fix-build-with-gcc-6.patch?h=fbterm-git" \
+    patch"ins.patch; 0001-Fix-build-with-gcc-6.patch" \
+    atclone"./configure --prefix=$ZPFX" \
+    atpull"%atclone" \
+    make"install" reset
+zplugin load izmntuk/fbterm
+
 # zsh-tag-search
 zplugin ice wait lucid bindmap"^R -> ^G"
 zplugin load ~/gitlab/zsh-tag-search.git
 
 # asciinema
-zplugin ice wait lucid as"command" \
-    atinit"export PYTHONPATH=$ZPFX/lib/python3.7/site-packages/" \
-    atclone"PYTHONPATH=$ZPFX/lib/python3.7/site-packages/ \
-    python3 setup.py --quiet install --prefix $ZPFX" \
-    atpull'%atclone' test'0' \
-    pick"$ZPFX/bin/asciinema"
-zplugin load asciinema/asciinema.git
+#zplugin ice wait lucid as"command" \
+#    atinit"export PYTHONPATH=$ZPFX/lib/python3.7/site-packages/" \
+#    atclone"PYTHONPATH=$ZPFX/lib/python3.7/site-packages/ \
+#    python3 setup.py --quiet install --prefix $ZPFX" \
+#    atpull'%atclone' test'0' \
+#    pick"$ZPFX/bin/asciinema"
+#zplugin load asciinema/asciinema.git
 
 # Notifications, configured to use zconvey
 zplugin ice wait lucid
