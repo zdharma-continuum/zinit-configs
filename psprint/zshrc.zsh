@@ -28,7 +28,7 @@ setopt no_hist_no_functions no_always_to_end  append_history list_packed
 setopt inc_append_history   complete_in_word  no_auto_menu   auto_pushd
 setopt pushd_ignore_dups    no_glob_complete  no_glob_dots   c_bases
 setopt numeric_glob_sort    no_share_history  promptsubst    auto_cd
-setopt rc_quotes
+setopt rc_quotes            extendedglob
 
 #setopt IGNORE_EOF
 #setopt NO_SHORT_LOOPS
@@ -96,9 +96,9 @@ alias pl='print -rl --'
 alias ls="exa -bh --color=auto"
 alias l="ls"      l.='ls -d .*'   la='ls -a'   ll='ls -lbt created'  rm='command rm -i'
 alias df='df -h'  du='du -h'      cp='cp -v'   mv='mv -v'      plast="last -20"
-alias reload="exec $SHELL -l -i"  grep="command grep --colour=auto"
+alias reload="exec $SHELL -l -i"  grep="command grep --colour=auto --binary-files=without-match --directories=skip"
 alias lynx="command lynx -accept-all-cookies"  ult="ulimit -c 195312; echo $$"
-ulimit -c $(( 100000000 / 512 ))
+ulimit -c unlimited
 
 # Git
 alias g1log_branches="git log --color=always --oneline --decorate --graph --branches"
@@ -178,8 +178,8 @@ alias updatedb="sudo /usr/libexec/locate.updatedb"
 # alias ls=psls ... - retain ls options but substitute the command with psls
 if altxt=`alias ls`; then
     altxt="${altxt#alias }" # for sh
-    if [ "$altxt" != "${altxt#ls=\'ls}" ]; then
-        altxt=${altxt#ls=\'ls}
+    if [ "$altxt" != "${altxt#ls=\'(ls|exa)}" ]; then
+        altxt=${altxt#ls=\'exa}
         altxt=${altxt%\'}
         altxt="ls=psls$altxt"
         alias "$altxt"
@@ -189,6 +189,8 @@ else
     alias ls="psls"
     zflai-msg "[zshrc] \`ls' alias: ls=psls"
 fi
+
+unset altxt
 
 fpath+=( $HOME/functions )
 
@@ -202,6 +204,8 @@ autoload -Uz psprobe_host   psffconv    pssetup_ssl_cert    psrecompile    pscop
 	     n1ssl_rtunnel  \
              pngimage       deploy-code deploy-message
 
+autoload +X zman
+functions[zzman]="${functions[zman]}"
 function run_diso {
   sh -c "$@" &
   disown
@@ -233,7 +237,7 @@ localbin_on
 PS1="READY > "
 zstyle ":plugin:zconvey" greeting "none"
 zstyle ':notify:*' command-complete-timeout 3
-zstyle ':notify:*' notifier /Users/sgniazdowski/.zplugin/plugins/zdharma---zconvey/cmds/plg-zsh-notify
+zstyle ':notify:*' notifier /home/user/.zplugin/plugins/zdharma---zconvey/cmds/plg-zsh-notify
 
 palette() { local colors; for n in {000..255}; do colors+=("%F{$n}$n%f"); done; print -cP $colors; }
 
@@ -247,9 +251,30 @@ zflai-msg "[zshrc] ssl tunnel PID: $!"
 
 typeset -F4 SECONDS=0
 
+[[ ! -f ~/.zplugin/bin/zplugin.zsh ]] && {
+    command mkdir -p ~/.zplugin
+    command git clone https://github.com/zdharma/zplugin ~/.zplugin/bin
+}
+
 source "$HOME/.zplugin/bin/zplugin.zsh"
 autoload -Uz _zplugin
 (( ${+_comps} )) && _comps[zplugin]=_zplugin
+
+# annex (a Zplugin extension) that generates man pages
+# for all plugins and snippets
+zplugin light zplugin/z-a-man
+# annex (a Zplugin extension) that runs tests for all
+# plugins and snippets
+zplugin light zplugin/z-a-test
+# annex (a Zplugin extension) that allows to download
+# files and apply patches
+zplugin light zplugin/z-a-patch-dl
+# annex (a Zplugin extension) which allows to
+# explicitly clone submodules
+zplugin light zplugin/z-a-submods
+# annex (a Zplugin extension) that exposes commands
+# without altering $PATH
+zplugin light zplugin/z-a-bin-gem-node
 
 # Assign each zsh session an unique ID, available in
 # ZUID_ID and also a codename (ZUID_CODENAME)
@@ -264,32 +289,32 @@ zplugin snippet OMZ::lib/git.zsh
 zplugin ice wait lucid atload"unalias grv g"
 zplugin snippet OMZ::plugins/git/git.plugin.zsh
 
-# zsh-startify, a vim-startify -like plugin
-: zplugin ice wait"0b" lucid atload"zsh-startify"
-: zplugin load zdharma/zsh-startify
-
 # On OSX, you might need to install coreutils from homebrew and use the
 # g-prefix – gsed, gdircolors
-zplugin ice wait"0c" lucid \
-    atclone"local PFX=${${(M)OSTYPE:#*darwin*}:+g}
-            git reset --hard; \${PFX}sed -i \
-            '/DIR/c\DIR                   38;5;63;1' LS_COLORS; \
-            \${PFX}dircolors -b LS_COLORS > c.zsh" \
-            atpull'%atclone' pick"c.zsh" nocompile'!' \
-            atload'zstyle ":completion:*" list-colors “${(s.:.)LS_COLORS}”'
-zplugin light trapd00r/LS_COLORS
+zplugin ice wait"0c" lucid reset \
+    atclone"local P=${${(M)OSTYPE:#*darwin*}:+g}
+            \${P}sed -i \
+            '/DIR/c\DIR 38;5;63;1' LS_COLORS; \
+            \${P}dircolors -b LS_COLORS > c.zsh" \
+    atpull'%atclone' pick"c.zsh" nocompile'!' \
+    atload'zstyle ":completion:*" list-colors “${(s.:.)LS_COLORS}”'
+zplugin light 'trapd00r/LS_COLORS'
 
 # Zconvey shell integration plugin
 zplugin ice wait silent
 zplugin load zdharma/zconvey
 
-# z-plugin (a Zplugin extension) which allows to explicitly clone submodules
-zplugin ice wait lucid
-zplugin light zdharma/z-p-submods
-
 # Another load of the same plugin, to add zc-bg-notify to PATH
-zplugin ice wait silent as"program" id-as"zconvey-cmd" pick"cmds/zc-bg-notify"
+zplugin ice wait silent pick"/dev/null" id-as"zconvey-cmd" \
+    sbin"cmds/zc-bg-notify" fbin"cmds/zc-bg-notify"
 zplugin load zdharma/zconvey
+
+# zsh-startify, a vim-startify like plugin
+zplugin ice wait"0b" lucid atload"zsh-startify"
+zplugin load zdharma/zsh-startify
+
+#zplugin ice wait lucid pick"manydots-magic" compile"manydots-magic"
+#zplugin load knu/zsh-manydots-magic
 
 # fzy
 zplugin ice wait"1" lucid as"program" pick"$ZPFX/bin/fzy*" \
@@ -298,7 +323,7 @@ zplugin ice wait"1" lucid as"program" pick"$ZPFX/bin/fzy*" \
 zplugin light jhawthorn/fzy
 
 # fzf, for fzf-marks
-zplugin ice wait lucid from"gh-r" as"program"
+zplugin ice wait lucid from"gh-r" sbin"fzf" fbin"fzf"
 zplugin light junegunn/fzf-bin
 
 # fzf-marks, at slot 0, for quick Ctrl-G accessibility
@@ -309,14 +334,26 @@ zplugin load urbainvaes/fzf-marks
 zplugin ice wait lucid
 zplugin load hlissner/zsh-autopair
 
+# hiredis library needed for zredis plugin
+zplugin ice wait"1" lucid make"PREFIX=$ZPFX all install" pick"/dev/null"
+zplugin light redis/hiredis
+
 # zredis together with some binding/tying
 zstyle ":plugin:zredis" configure_opts "--without-tcsetpgrp"
 zstyle ":plugin:zredis" cflags  "-Wall -O2 -g -Wno-unused-but-set-variable"
+#zstyle ":plugin:zredis" cppflags  "-I$ZPFX/include -I/usr/include"
+#zstyle ":plugin:zredis" ldflags  "-L$ZPFX/lib -L /usr/lib"
 zplugin ice wait"1" lucid \
     atload'ztie -d db/redis -a 127.0.0.1:4815/5 -P $HOME/.zredisconf -zSL main rdhash'
 zplugin load zdharma/zredis
 
-# a service that runs the redis database, in background, single instance
+# An yet unfinished plugin for remote command
+# execution based on zredis
+zplugin ice wait"1" lucid
+zplugin load zdharma/zredis-cmd
+
+# a service that runs the redis database, in
+# background, single instance
 zplugin ice wait"1" lucid service"redis"
 zplugin light zservices/redis
 
@@ -359,8 +396,8 @@ zplugin load ergenekonyigit/lambda-gitster
 
 # Theme no. 4 – geometry
 GEOMETRY_COLOR_DIR=63 GEOMETRY_PATH_COLOR=63
-zplugin ice lucid load'![[ $MYPROMPT = 4 ]]' unload'![[ $MYPROMPT != 4 ]]' \
-    atload"prompt_geometry_render"
+zplugin ice load'![[ $MYPROMPT = 4 ]]' unload'![[ $MYPROMPT != 4 ]]' \
+    atload'!geometry::prompt' lucid
 zplugin load geometry-zsh/geometry
 
 # Theme no. 5 – pure
@@ -370,56 +407,68 @@ zplugin load sindresorhus/pure
 
 # Theme no. 6 - agkozak-zsh-theme
 AGKOZAK_FORCE_ASYNC_METHOD=subst-async
-zplugin ice lucid load'![[ $MYPROMPT = 6 ]]' unload'![[ $MYPROMPT != 6 ]]' 
+zplugin ice lucid load'![[ $MYPROMPT = 6 ]]' unload'![[ $MYPROMPT != 6 ]]' \
+            atload'!_agkozak_precmd'
 zplugin load agkozak/agkozak-zsh-theme
 
 # Theme no. 7 - zinc
 zplugin ice load'![[ $MYPROMPT = 7 ]]' unload'![[ $MYPROMPT != 7 ]]' \
-    atclone'prompt_zinc_compile' atload'zinc_selfdestruct_setup' \
+    atclone'prompt_zinc_compile' \
     atpull'%atclone' compile"{zinc_functions/*,segments/*,zinc.zsh}" \
-    nocompletions wrap-track'prompt_zinc_setup'
+    nocompletions atload'!prompt_zinc_setup; prompt_zinc_precmd'
 zplugin load robobenklein/zinc
 
 # Theme no. 8 - powerlevel10k
 zplugin ice load'![[ $MYPROMPT = 8 ]]' unload'![[ $MYPROMPT != 8 ]]' \
-    atload'source ~/.p10k.zsh; _p9k_precmd' lucid nocd wrap-track"_p9k_precmd"
+    atload'!source ~/.p10k.zsh; _p9k_precmd' lucid #wrap-track"_p9k_precmd"
 zplugin load romkatv/powerlevel10k
+
+# Theme no. 9 - git-prompt
+zplugin ice load'![[ $MYPROMPT = 9 ]]' unload'![[ $MYPROMPT != 9 ]]' \
+    atload'!_zsh_git_prompt_precmd_hook' lucid
+zplugin load woefe/git-prompt.zsh
+
 # ZUI and Crasis
 zplugin ice wait"1" lucid
 zplugin load zdharma/zui
-zplugin ice wait'[[ -n ${ZLAST_COMMANDS[(r)cras*]} ]]' lucid
+zplugin ice wait'[[ -n ${ZLAST_COMMANDS[(r)cra*]} ]]'
 zplugin load zdharma/zplugin-crasis
 
 # Gitignore plugin – commands gii and gi
 zplugin ice wait"2" lucid
 zplugin load voronkovich/gitignore.plugin.zsh
 
-# Autosuggestions & fast-syntax-highlighting
-zplugin ice wait"1b" lucid atload"_zsh_autosuggest_start" \
-    wrap-track"_zsh_autosuggest_start"
+# Fast-syntax-highlighting & autosuggestions
+zplugin ice wait"1" lucid atload"!_zsh_autosuggest_start"
 zplugin load zsh-users/zsh-autosuggestions
-zplugin ice wait"1" lucid atinit"ZPLGM[COMPINIT_OPTS]=-C; zpcompinit; zpcdreplay"
+zplugin ice wait"1b" lucid atinit"ZPLGM[COMPINIT_OPTS]=-C; zpcompinit; zpcdreplay"
 zplugin light zdharma/fast-syntax-highlighting
 
-#zplugin ice wait"1" lucid from"gl" from"psprint@gitlab.com"
+# F-Sy-H automatic themes – available for patrons
+# https://patreon.com/psprint
+#zplugin ice wait"1" lucid from"psprint@gitlab.com"
 #zplugin load psprint/fsh-auto-themes
 
 # ogham/exa, replacement for ls
-zplugin ice wait"2" lucid from"gh-r" as"program" mv"exa* -> exa"
+zplugin ice wait"2" lucid from"gh-r" mv"exa* -> exa" sbin"exa" fbin"exa"
 zplugin light ogham/exa
 
+# sharkdp/fd
+zplugin ice from"gh-r" mv"fd* -> fd" sbin"fd/fd" fbin"fd/fd"
+zplugin light sharkdp/fd
+
 # vramsteg
-zplugin ice wait"2" lucid as"program" pick"src/vramsteg" \
-            atclone'cmake .' atpull'%atclone' make
+zplugin ice wait"2" lucid sbin"src/vramsteg" fbin"src/vramsteg" \
+            atclone'cmake .' atpull'%atclone' make pick"/dev/null"
 zplugin load psprint/vramsteg-zsh
 
 # revolver
-zplugin ice wait"2" lucid as"program" pick"revolver"
+zplugin ice wait"2" lucid sbin"revolver" fbin"revolver" pick"/dev/null"
 zplugin load psprint/revolver
 
 # zunit
-zplugin ice wait"2" lucid as"program" pick"zunit" \
-            atclone"./build.zsh" atpull"%atclone"
+zplugin ice wait"2" lucid sbin"zunit" fbin"zunit" atclone"./build.zsh" \
+            atpull"%atclone" pick'/dev/null'
 zplugin load molovo/zunit
 
 # declare-zshrc
@@ -427,7 +476,7 @@ zplugin ice wait"2" lucid
 zplugin load zdharma/declare-zshrc
 
 # zsh-diff-so-fancy
-zplugin ice wait"2" lucid as"program" pick"bin/git-dsf"
+zplugin ice wait"2" lucid sbin"bin/git-dsf" fbin"bin/git-dsf" pick"/dev/null"
 zplugin load zdharma/zsh-diff-so-fancy
 
 # forgit
@@ -452,7 +501,7 @@ zplugin ice wait"2" lucid as"program" pick"$ZPFX/bin/git-(url|guclone)" make"ins
 zplugin load zdharma/git-url
 
 # git-recall
-zplugin ice wait"3" lucid as"program" pick"git-recall"
+zplugin ice wait"3" lucid sbin"git-recall" fbin"git-recall" pick"/dev/null"
 zplugin load Fakerr/git-recall
 
 # git-quick-stats
@@ -465,8 +514,19 @@ zplugin load arzzen/git-quick-stats.git
 zplugin ice wait lucid bindmap"^R -> ^G"
 zplugin load ~/gitlab/zsh-tag-search.git
 
-: zplugin ice wait lucid blockf
-: zplugin light marzocchi/zsh-notify
+# asciinema
+zplugin ice wait lucid as"command" \
+    atinit"export PYTHONPATH=$ZPFX/lib/python3.7/site-packages/" \
+    atclone"PYTHONPATH=$ZPFX/lib/python3.7/site-packages/ \
+    python3 setup.py --quiet install --prefix $ZPFX" \
+    atpull'%atclone' test'0' \
+    pick"$ZPFX/bin/asciinema"
+zplugin load asciinema/asciinema.git
+
+# Notifications, configured to use zconvey
+zplugin ice wait lucid
+zplugin light marzocchi/zsh-notify
+
 : zplugin ice wait lucid
 : zplugin light rimraf/k
 : zplugin light zsh-users/zsh-syntax-highlighting

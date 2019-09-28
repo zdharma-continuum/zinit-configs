@@ -1,6 +1,7 @@
 #!/usr/bin/env zsh
 
-sudo apt install --yes cmake redis-server libhiredis-dev
+sudo apt install --yes cmake redis-server libhiredis-dev \
+                        tree gem
 
 # For zdharma/zredis
 sudo mkdir -p usr/local/var/db/redis
