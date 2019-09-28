@@ -513,15 +513,15 @@ zplugin ice wait"3" lucid as"program" make"PREFIX=$ZPFX install" \
 zplugin load arzzen/git-quick-stats.git
 
 # fbterm
-zplugin ice wait"3" lucid \
-    as"command" pick"$ZPFX/bin/fbterm" \
-    dl"https://bugs.archlinux.org/task/46860?getfile=13513 -> ins.patch" \
-    dl"https://aur.archlinux.org/cgit/aur.git/plain/0001-Fix-build-with-gcc-6.patch?h=fbterm-git" \
-    patch"ins.patch; 0001-Fix-build-with-gcc-6.patch" \
-    atclone"./configure --prefix=$ZPFX" \
-    atpull"%atclone" \
-    make"install" reset
-zplugin load izmntuk/fbterm
+#zplugin ice wait"3" lucid \
+#    as"command" pick"$ZPFX/bin/fbterm" \
+#    dl"https://bugs.archlinux.org/task/46860?getfile=13513 -> ins.patch" \
+#    dl"https://aur.archlinux.org/cgit/aur.git/plain/0001-Fix-build-with-gcc-6.patch?h=fbterm-git" \
+#    patch"ins.patch; 0001-Fix-build-with-gcc-6.patch" \
+#    atclone"./configure --prefix=$ZPFX" \
+#    atpull"%atclone" \
+#    make"install" reset
+#zplugin load izmntuk/fbterm
 
 # zsh-tag-search
 zplugin ice wait lucid bindmap"^R -> ^G"
