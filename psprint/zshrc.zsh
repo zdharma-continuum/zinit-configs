@@ -289,6 +289,11 @@ zplugin snippet OMZ::lib/git.zsh
 zplugin ice wait lucid atload"unalias grv g"
 zplugin snippet OMZ::plugins/git/git.plugin.zsh
 
+# zunit
+zplugin ice wait"1" lucid sbin"zunit" fbin"zunit" atclone"./build.zsh" \
+            atpull"%atclone" pick'/dev/null'
+zplugin load molovo/zunit
+
 # On OSX, you might need to install coreutils from homebrew and use the
 # g-prefix – gsed, gdircolors
 zplugin ice wait"0c" lucid reset \
@@ -344,7 +349,7 @@ zstyle ":plugin:zredis" cflags  "-Wall -O2 -g -Wno-unused-but-set-variable"
 #zstyle ":plugin:zredis" cppflags  "-I$ZPFX/include -I/usr/include"
 #zstyle ":plugin:zredis" ldflags  "-L$ZPFX/lib -L /usr/lib"
 zplugin ice wait"1" lucid \
-    atload'ztie -d db/redis -a 127.0.0.1:4815/5 -P $HOME/.zredisconf -zSL main rdhash'
+    atload'ztie -d db/redis -a 127.0.0.1:4815/5 -zSL main rdhash'
 zplugin load zdharma/zredis
 
 # An yet unfinished plugin for remote command
@@ -466,11 +471,6 @@ zplugin load psprint/vramsteg-zsh
 zplugin ice wait"2" lucid sbin"revolver" fbin"revolver" pick"/dev/null"
 zplugin load psprint/revolver
 
-# zunit
-zplugin ice wait"2" lucid sbin"zunit" fbin"zunit" atclone"./build.zsh" \
-            atpull"%atclone" pick'/dev/null'
-zplugin load molovo/zunit
-
 # declare-zshrc
 zplugin ice wait"2" lucid
 zplugin load zdharma/declare-zshrc
@@ -513,7 +513,7 @@ zplugin ice wait"3" lucid as"program" make"PREFIX=$ZPFX install" \
 zplugin load arzzen/git-quick-stats.git
 
 # fbterm
-zplugin ice \
+zplugin ice wait"3" lucid \
     as"command" pick"$ZPFX/bin/fbterm" \
     dl"https://bugs.archlinux.org/task/46860?getfile=13513 -> ins.patch" \
     dl"https://aur.archlinux.org/cgit/aur.git/plain/0001-Fix-build-with-gcc-6.patch?h=fbterm-git" \
