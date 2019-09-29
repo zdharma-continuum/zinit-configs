@@ -306,12 +306,7 @@ zplugin ice wait"0c" lucid reset \
 zplugin light 'trapd00r/LS_COLORS'
 
 # Zconvey shell integration plugin
-zplugin ice wait silent
-zplugin load zdharma/zconvey
-
-# Another load of the same plugin, to add zc-bg-notify to PATH
-zplugin ice wait silent pick"/dev/null" id-as"zconvey-cmd" \
-    sbin"cmds/zc-bg-notify" fbin"cmds/zc-bg-notify"
+zplugin ice wait silent sbin"cmds/zc-bg-notify" fbin"cmds/zc-bg-notify"
 zplugin load zdharma/zconvey
 
 # zsh-startify, a vim-startify like plugin
@@ -468,7 +463,7 @@ zplugin ice wait"2" lucid sbin"src/vramsteg" fbin"src/vramsteg" \
 zplugin load psprint/vramsteg-zsh
 
 # revolver
-zplugin ice wait"2" lucid sbin"revolver" fbin"revolver" pick"/dev/null"
+zplugin ice wait"2" lucid as"program" pick"revolver"
 zplugin load psprint/revolver
 
 # declare-zshrc
@@ -525,7 +520,7 @@ zplugin load arzzen/git-quick-stats.git
 
 # zsh-tag-search
 zplugin ice wait lucid bindmap"^R -> ^G"
-zplugin load ~/gitlab/zsh-tag-search.git
+zplugin load zdharma/zsh-tag-search
 
 # asciinema
 #zplugin ice wait lucid as"command" \
