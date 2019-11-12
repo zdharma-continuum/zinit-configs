@@ -266,8 +266,8 @@ autoload -Uz _zplugin
 (( ${+_comps} )) && _comps[zplugin]=_zplugin
 
 # Zplugin annexes
+# zplugin/z-a-man \
 zplugin light-mode for \
-    zplugin/z-a-man \
     zplugin/z-a-test \
     zplugin/z-a-patch-dl \
     zplugin/z-a-submods \
