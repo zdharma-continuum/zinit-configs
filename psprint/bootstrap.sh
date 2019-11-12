@@ -2,7 +2,7 @@
 
 sudo DEBIAN_FRONTEND=noninteractive apt install --yes cmake redis-server libhiredis-dev \
                         tree gem libfreetype6-dev libfontconfig-dev \
-                        autoconf automake
+                        autoconf automake nodejs
 
 # For zdharma/zredis
 sudo mkdir -p usr/local/var/db/redis
