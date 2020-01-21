@@ -366,7 +366,7 @@ zinit wait"0c" lucid \
 
 # Zconvey shell integration plugin
 zinit wait lucid \
- sbin"cmds/zc-bg-notify"sbin"cmds/plg-zsh-notify" for \
+ sbin"cmds/zc-bg-notify" sbin"cmds/plg-zsh-notify" for \
     zdharma/zconvey
 
 # zsh-startify, a vim-startify like plugin
@@ -474,7 +474,7 @@ zinit as"null" wait"3" lucid for \
     sbin davidosomething/git-my \
     sbin atload"export _MENU_THEME=legacy" \
         arzzen/git-quick-stats \
-    make"PREFIX=$ZPFX install" iwata/git-now \
+    sbin iwata/git-now \
     make"PREFIX=$ZPFX"         tj/git-extras \
     sbin"bin/git-dsf;bin/diff-so-fancy" zdharma/zsh-diff-so-fancy \
     sbin"git-url;git-guclone" make"GITURL_NO_CGITURL=1" zdharma/git-url
