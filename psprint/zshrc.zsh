@@ -454,7 +454,7 @@ zinit wait"2" lucid for \
     zdharma/zflai \
  blockf \
     zdharma/zui \
-    zinit/zinit-console \
+    zinit-zsh/zinit-console \
  trigger-load'!crasis' \
     zdharma/zinit-crasis \
  atinit"forgit_ignore='fgi'" \
