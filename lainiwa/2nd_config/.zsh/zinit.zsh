@@ -1,29 +1,29 @@
 
 #################################################################
-# INSTALL `zplugin` AND LOAD IT
+# INSTALL `zinit` AND LOAD IT
 #
 
-# Install `zplugin` if not installed
-if [ ! -d "${HOME}/.zplugin" ]; then
-    sh -c "$(curl -fsSL https://raw.githubusercontent.com/zdharma/zplugin/master/doc/install.sh)"
+# Install `zinit` if not installed
+if [ ! -d "${HOME}/.zinit" ]; then
+    sh -c "$(curl -fsSL https://raw.githubusercontent.com/zdharma/zinit/master/doc/install.sh)"
 fi
 
-# Load `zplugin`
-source "${HOME}/.zplugin/bin/zplugin.zsh"
-autoload -Uz _zplugin
-(( ${+_comps} )) && _comps[zplugin]=_zplugin
+# Load `zinit`
+source "${HOME}/.zinit/bin/zinit.zsh"
+autoload -Uz _zinit
+(( ${+_comps} )) && _comps[zinit]=_zinit
 
 
 #################################################################
 # FUNCTIONS TO MAKE CONFIGURATION LESS VERBOSE
 #
 
-turbo0()   { zplugin ice wait"0a" lucid             "${@}"; }
-turbo1()   { zplugin ice wait"0b" lucid             "${@}"; }
-turbo2()   { zplugin ice wait"0c" lucid             "${@}"; }
-zcommand() { zplugin ice wait"0b" lucid as"command" "${@}"; }
-zload()    { zplugin load                           "${@}"; }
-zsnippet() { zplugin snippet                        "${@}"; }
+turbo0()   { zinit ice wait"0a" lucid             "${@}"; }
+turbo1()   { zinit ice wait"0b" lucid             "${@}"; }
+turbo2()   { zinit ice wait"0c" lucid             "${@}"; }
+zcommand() { zinit ice wait"0b" lucid as"command" "${@}"; }
+zload()    { zinit load                           "${@}"; }
+zsnippet() { zinit snippet                        "${@}"; }
 
 
 #################################################################
@@ -115,7 +115,7 @@ zcommand from"gh-r" mv'tl-* -> tl' if'[[ -n $DISPLAY ]]'
 # INSTALL `k` COMMAND AND GENERATE COMPLITIONS
 #
 turbo0; zload RobSis/zsh-completion-generator
-turbo1 atclone"gencomp k; ZPLGM[COMPINIT_OPTS]='-i' zpcompinit" atpull'%atclone'
+turbo1 atclone"gencomp k; ZINIT[COMPINIT_OPTS]='-i' zpcompinit" atpull'%atclone'
     zload supercrabtree/k
 alias l='k -h'
 
@@ -151,7 +151,7 @@ export GITCD_HOME=${HOME}/tmp
 
 # Install completions for `my` script and for python-gist
 # (use `-f` flag to force completion installation)
-zplugin ice as"completion" if"[ -f '${HOME}/.zsh/completions/_my' ]" id-as"my";
+zinit ice as"completion" if"[ -f '${HOME}/.zsh/completions/_my' ]" id-as"my";
     zsnippet "${HOME}/.zsh/completions/_my"
 
 turbo0 as"completion" if"[ -f '${HOME}/.local/share/gist/gist.zsh' ]" id-as"gist" mv"gist.zsh -> _gist";
@@ -171,7 +171,7 @@ turbo1; zload zdharma/history-search-multi-word
 
 # Syntax highlighting
 # (compinit without `-i` spawns warning on `sudo -s`)
-turbo0 atinit"ZPLGM[COMPINIT_OPTS]='-i' zpcompinit; zpcdreplay"
+turbo0 atinit"ZINIT[COMPINIT_OPTS]='-i' zpcompinit; zpcdreplay"
     zload zdharma/fast-syntax-highlighting
 
 # Autosuggestions

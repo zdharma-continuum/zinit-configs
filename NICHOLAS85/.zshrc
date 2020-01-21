@@ -1,33 +1,33 @@
 # https://github.com/NICHOLAS85/dotfiles/blob/xps_13_9365/.zshrc
 
-# Install zplugin if not installed
-if [ ! -d "${HOME}/.zplugin" ]; then
-    sh -c "$(curl -fsSL https://raw.githubusercontent.com/zdharma/zplugin/master/doc/install.sh)"
+# Install zinit if not installed
+if [ ! -d "${HOME}/.zinit" ]; then
+    sh -c "$(curl -fsSL https://raw.githubusercontent.com/zdharma/zinit/master/doc/install.sh)"
 fi
 
-module_path+=( "/home/nicholas/.zplugin/bin/zmodules/Src" )
-zmodload zdharma/zplugin
+module_path+=( "/home/nicholas/.zinit/bin/zmodules/Src" )
+zmodload zdharma/zplugin &>/dev/null
 
-### Added by Zplugin's installer
-source "${HOME}/.zplugin/bin/zplugin.zsh"
-autoload -Uz _zplugin
-(( ${+_comps} )) && _comps[zplugin]=_zplugin
-### End of Zplugin's installer chunk
+### Added by Zinit's installer
+source "${HOME}/.zinit/bin/zinit.zsh"
+autoload -Uz _zinit
+(( ${+_comps} )) && _comps[zinit]=_zinit
+### End of Zinit's installer chunk
 
-if [[ ! -d "${ZPLGM[PLUGINS_DIR]}/_local---config-files" ]]; then
+if [[ ! -d "${ZINIT[PLUGINS_DIR]}/_local---config-files" ]]; then
     curl https://codeload.github.com/NICHOLAS85/dotfiles/tar.gz/xps_13_9365 | \
-    tar -xz --strip=3 dotfiles-xps_13_9365/.zplugin/plugins/_local---config-files
-    mv _local---config-files "${ZPLGM[PLUGINS_DIR]}/"
+    tar -xz --strip=3 dotfiles-xps_13_9365/.zinit/plugins/_local---config-files
+    mv _local---config-files "${ZINIT[PLUGINS_DIR]}/"
 fi
 
 # Functions to make configuration less verbose
 # zt() : First argument is a wait time and suffix, ie "0a". Anything that doesn't match will be passed as if it were an ice mod. Default ices depth'1' and lucid
 # zct(): First argument provides $MYPROMPT value used in load'' and unload'' ices. Sources a config file with tracking for easy unloading using $MYPROMPT value. Small hack to function in for-syntax
-zt()  { zplugin depth'1' lucid ${1/#[0-9][a-c]/wait"$1"} "${@:2}"; }
-zct() { -zplg-ice load"[[ \${MYPROMPT} = ${1} ]]" unload"[[ \${MYPROMPT} != ${1} ]]" \
+zt()  { zinit depth'1' lucid ${1/#[0-9][a-c]/wait"$1"} "${@:2}"; }
+zct() { .zinit-ice load"[[ \${MYPROMPT} = ${1} ]]" unload"[[ \${MYPROMPT} != ${1} ]]" \
         atinit'[ -f "${thmf}/${MYPROMPT}-pre" ] && source "${thmf}/${MYPROMPT}-pre"' \
         atload'![ -f "${thmf}/${MYPROMPT}-post" ] && source "${thmf}/${MYPROMPT}-post"'; \
-        ZPLG_ICE+=( "${(kv)ZPLG_ICES[@]}"); }
+        ZINIT_ICE+=( "${(kv)ZINIT_ICES[@]}"); }
 
 ##################
 # Initial Prompt #
@@ -48,7 +48,7 @@ zt for \
 # Annexes #
 ###########
 
-zt light-mode for zplugin/z-a-patch-dl
+zt light-mode for zinit/z-a-patch-dl
 
 ############################
 # Conditional themes block #
@@ -84,7 +84,7 @@ zt 0a light-mode for \
 \
     as'program' pick'bin/git-dsf' zdharma/zsh-diff-so-fancy \
 \
-    blockf atpull'zplugin creinstall -q "$PWD"' zsh-users/zsh-completions \
+    blockf atpull'zinit creinstall -q "$PWD"' zsh-users/zsh-completions \
 \
     compile'{src/*.zsh,src/strategies/*}' atload'_zsh_autosuggest_start' zsh-users/zsh-autosuggestions
 
@@ -142,7 +142,7 @@ zt light-mode for \
 \
     trigger-load'!updatelocal' blockf NICHOLAS85/updatelocal \
 \
-    trigger-load'!gencomp' pick'zsh-completion-generator.plugin.zsh' atload'zplugin creinstall -q "$PWD"' \
+    trigger-load'!gencomp' pick'zsh-completion-generator.plugin.zsh' atload'zinit creinstall -q "$PWD"' \
     RobSis/zsh-completion-generator
 
 $isdolphin || dotscheck

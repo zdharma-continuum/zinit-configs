@@ -2,35 +2,35 @@
 
 export XDG_CACHE_HOME=${XDG_CACHE_HOME:=~/.cache}
 
-typeset -A ZPLGM
-ZPLG_HOME=$XDG_CACHE_HOME/zsh/zplugin
-ZPLGM[HOME_DIR]=$ZPLG_HOME
-ZPLGM[ZCOMPDUMP_PATH]=$XDG_CACHE_HOME/zsh/zcompdump
+typeset -A ZINIT
+ZINIT_HOME=$XDG_CACHE_HOME/zsh/zinit
+ZINIT[HOME_DIR]=$ZINIT_HOME
+ZINIT[ZCOMPDUMP_PATH]=$XDG_CACHE_HOME/zsh/zcompdump
 
-if [[ ! -f $ZPLG_HOME/bin/zplugin.zsh ]]; then
-	git clone https://github.com/psprint/zplugin $ZPLG_HOME/bin
-	zcompile $ZPLG_HOME/bin/zplugin.zsh
+if [[ ! -f $ZINIT_HOME/bin/zinit.zsh ]]; then
+	git clone https://github.com/psprint/zinit $ZINIT_HOME/bin
+	zcompile $ZINIT_HOME/bin/zinit.zsh
 fi
-source $ZPLG_HOME/bin/zplugin.zsh
+source $ZINIT_HOME/bin/zinit.zsh
 load=light
 
-zplugin $load willghatch/zsh-saneopt
+zinit $load willghatch/zsh-saneopt
 
-zplugin $load mafredri/zsh-async
-zplugin $load rupa/z
-zplugin $load sindresorhus/pure
+zinit $load mafredri/zsh-async
+zinit $load rupa/z
+zinit $load sindresorhus/pure
 
-zplugin ice nocompile:! pick:c.zsh atpull:%atclone atclone:'dircolors -b LS_COLORS > c.zsh'
-zplugin $load trapd00r/LS_COLORS
+zinit ice nocompile:! pick:c.zsh atpull:%atclone atclone:'dircolors -b LS_COLORS > c.zsh'
+zinit $load trapd00r/LS_COLORS
 
-zplugin ice silent wait:1 atload:_zsh_autosuggest_start
-zplugin $load zsh-users/zsh-autosuggestions
+zinit ice silent wait:1 atload:_zsh_autosuggest_start
+zinit $load zsh-users/zsh-autosuggestions
 
-zplugin ice blockf; zplugin $load zsh-users/zsh-completions
+zinit ice blockf; zinit $load zsh-users/zsh-completions
 
-zplugin ice silent wait:1; zplugin $load mollifier/cd-gitroot
-zplugin ice silent wait:1; zplugin $load micha/resty
-zplugin ice silent wait:1; zplugin $load supercrabtree/k
+zinit ice silent wait:1; zinit $load mollifier/cd-gitroot
+zinit ice silent wait:1; zinit $load micha/resty
+zinit ice silent wait:1; zinit $load supercrabtree/k
 
-zplugin ice silent wait!1 atload"ZPLGM[COMPINIT_OPTS]=-C; zpcompinit"
-zplugin $load zdharma/fast-syntax-highlighting
+zinit ice silent wait!1 atload"ZINIT[COMPINIT_OPTS]=-C; zpcompinit"
+zinit $load zdharma/fast-syntax-highlighting

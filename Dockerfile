@@ -22,8 +22,8 @@ RUN adduser --disabled-password --gecos '' user         && \
     usermod --shell /bin/zsh user
 USER user
 
-# Install zplugin
-RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/zdharma/zplugin/master/doc/install.sh)"
+# Install zinit
+RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/zdharma/zinit/master/doc/install.sh)"
 
 # Copy configs into home directory
 ARG FOLDER
@@ -44,7 +44,7 @@ RUN if [ -f /home/user/bootstrap.sh ]; then \
 # Install all plugins
 ARG TERM
 ENV TERM ${TERM}
-RUN SHELL=/bin/zsh zsh -i -c -- 'zplugin module build; -zplg-scheduler burst || true '
+RUN SHELL=/bin/zsh zsh -i -c -- 'zinit module build; @zinit-scheduler burst || true '
 
 CMD zsh -i -l
 
