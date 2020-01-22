@@ -5,6 +5,8 @@ case `uname` in
     brew install fzf
   ;;
   Linux)
-    sudo apt install fzf
+    # No such package
+    # sudo apt install fzf
+    :
   ;;
 esac
