@@ -263,7 +263,7 @@ autoload -Uz _zinit
 # Zplugin annexes
 # zinit-zsh/z-a-man \
 zinit light-mode for \
-    zinit-zsh/z-a-test \
+    zinit-zsh/z-a-as-monitor \
     zinit-zsh/z-a-patch-dl \
     zinit-zsh/z-a-submods \
     zinit-zsh/z-a-bin-gem-node \
@@ -339,20 +339,7 @@ zinit wait"2" lucid as"null" for \
 # revolver
 zinit wait"2" lucid as"program" pick"revolver" for psprint/revolver
 
-# On OSX, you might need to install coreutils from homebrew and use the
-# g-prefix – gsed, gdircolors
-: zinit wait"0c" lucid reset \
- atclone"local P=${${(M)OSTYPE:#*darwin*}:+g}
-        \${P}sed -i \
-        '/DIR/c\DIR 38;5;63;1' LS_COLORS; \
-        \${P}dircolors -b LS_COLORS > c.zsh" \
- atpull'%atclone' pick"c.zsh" nocompile'!' \
- atload'zstyle ":completion:*:default" list-colors "${(s.:.)LS_COLORS}";' for \
-    trapd00r/LS_COLORS
-
-zinit wait"0c" lucid \
- atload'zstyle ":completion:*" list-colors "${(s.:.)LS_COLORS}";' for \
-    zpm-zsh/dircolors-material
+zi pack for dircolors-material
 
 # Zconvey shell integration plugin
 zinit wait lucid \
@@ -381,22 +368,8 @@ zinit wait lucid for \
     hlissner/zsh-autopair \
     urbainvaes/fzf-marks
 
-# hiredis library needed for zredis plugin
-zinit wait"1" lucid make"PREFIX=$ZPFX all install" pick"/dev/null" for \
-    redis/hiredis
-
-# zredis together with some binding/tying
-zstyle ":plugin:zredis" configure_opts "--without-tcsetpgrp"
-zstyle ":plugin:zredis" cflags  "-Wall -O2 -g -Wno-unused-but-set-variable"
-zinit wait"1" lucid \
- atload'ztie -d db/redis -a 127.0.0.1:4815/5 -zSL main rdhash' for \
-    zdharma/zredis
-
 # A few wait"1 plugins
 zinit wait"1" lucid for \
-    zdharma/zredis-cmd \
- service"redis" \
-    zservices/redis \
     psprint/zsh-navigation-tools \
  atinit'zstyle ":history-search-multi-word" page-size "7"' \
     zdharma/history-search-multi-word \
