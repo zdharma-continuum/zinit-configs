@@ -1,8 +1,3 @@
-# Enable Powerlevel10k instant prompt. Should stay at the top of ~/.zshrc.
-if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
-fi
-
 #
 # Exports
 #
@@ -329,11 +324,6 @@ zinit load'![[ $MYPROMPT = 7 ]]' unload'![[ $MYPROMPT != 7 ]]' \
  atload'!prompt_zinc_setup; prompt_zinc_precmd' nocd for \
     robobenklein/zinc
 
-# Theme no. 8 - powerlevel10k
-zinit load'![[ $MYPROMPT = 8 ]]' unload'![[ $MYPROMPT != 8 ]]' \
- atload'!source ~/.p10k.zsh; _p9k_precmd' lucid nocd for \
-    romkatv/powerlevel10k
-
 # Theme no. 9 - git-prompt
 zinit lucid load'![[ $MYPROMPT = 9 ]]' unload'![[ $MYPROMPT != 9 ]]' \
  atload'!_zsh_git_prompt_precmd_hook' nocd for \
@@ -504,12 +494,7 @@ zinit as"null" wait"3" lucid for \
 
 zflai-msg "[zshrc] Zplugin block took ${(M)$(( SECONDS * 1000 ))#*.?} ms"
 
-# powerlevel10k
-MYPROMPT=8
-
-# Load within zshrc – for the instant prompt
-zinit atload'!source ~/.p10k.zsh' lucid nocd
-zinit load romkatv/powerlevel10k
+MYPROMPT=1
 
 #
 # Zstyles & other
