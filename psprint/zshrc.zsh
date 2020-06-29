@@ -324,8 +324,8 @@ zinit load'![[ $MYPROMPT = 7 ]]' unload'![[ $MYPROMPT != 7 ]]' \
  atload'!prompt_zinc_setup; prompt_zinc_precmd' nocd for \
     robobenklein/zinc
 
-# Theme no. 9 - git-prompt
-zinit lucid load'![[ $MYPROMPT = 9 ]]' unload'![[ $MYPROMPT != 9 ]]' \
+# Theme no. 8 - git-prompt
+zinit lucid load'![[ $MYPROMPT = 8 ]]' unload'![[ $MYPROMPT != 8 ]]' \
  atload'!_zsh_git_prompt_precmd_hook' nocd for \
     woefe/git-prompt.zsh
 
@@ -339,7 +339,7 @@ zinit wait"2" lucid as"null" for \
 # revolver
 zinit wait"2" lucid as"program" pick"revolver" for psprint/revolver
 
-zi pack for dircolors-material
+zinit pack for dircolors-material
 
 # Zconvey shell integration plugin
 zinit wait lucid \
@@ -350,17 +350,8 @@ zinit wait lucid \
 : zinit wait"0b" lucid atload"zsh-startify" for zdharma/zsh-startify
 : zinit wait lucid pick"manydots-magic" compile"manydots-magic" for knu/zsh-manydots-magic
 
-# fzy
-zinit wait"1" lucid as"program" pick"$ZPFX/bin/fzy*" \
- atclone"cp contrib/fzy-* $ZPFX/bin/" \
- make"!PREFIX=$ZPFX install" for \
-    jhawthorn/fzy
-
 # remark
-zinit wait'1c' lucid id-as'remark' \
- sbin'n:node_modules/.bin/remark' \
- node'remark <- !remark-cli; remark-man' for \
-    zdharma/null
+zinit pack for remark
 
 # zsh-autopair
 # fzf-marks, at slot 0, for quick Ctrl-G accessibility
@@ -403,13 +394,11 @@ zinit wait"2" lucid trigger-load'!gi;!gii' \
 # ogham/exa, sharkdp/fd, fzf
 zinit wait"2" lucid as"null" from"gh-r" for \
     mv"exa* -> exa" sbin  ogham/exa \
-    mv"fd* -> fd" sbin"fd/fd"  @sharkdp/fd \
-    sbin junegunn/fzf-bin
+    mv"fd* -> fd" sbin"fd/fd"  @sharkdp/fd
 
-# vramsteg
-zinit wait"2" lucid as"null" sbin"src/vramsteg" \
- atclone'cmake .' atpull'%atclone' make for \
-    psprint/vramsteg-zsh
+# fzf, fzy
+zinit pack"bgn-binary" for fzf
+zinit pack"bgn" for fzy
 
 # A few wait'2' plugins
 zinit wait"2" lucid for \
