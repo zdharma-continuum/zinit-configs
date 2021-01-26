@@ -1,0 +1,94 @@
+--- Fmstrat---winapps/bin/winapps	2020-12-09 03:05:29.845329531 -0500
++++ Fmstrat---winapps/bin/winapps-patch	2020-12-09 03:05:25.621439998 -0500
+@@ -47,6 +47,16 @@
+ 	exit
+ fi
+ 
++DOMSTATE=$(sudo virsh domstate RDPWindows)
++case $DOMSTATE in
++    paused)
++        sudo virsh resume RDPWindows
++    ;;
++    "shut off")
++        sudo virsh start RDPWindows
++    ;;
++esac
++
+ if [ -z "${RDP_IP}" ]; then
+ 	if [ -z "$(groups |grep libvirt)" ]; then
+ 		echo "You are not a member of the libvirt group. Run the below then reboot."
+@@ -54,12 +64,12 @@
+ 		echo '  sudo usermod -a -G kvm $(whoami)'
+ 		exit
+ 	fi
+-	if [ -z "$(virsh list |grep RDPWindows)" ]; then
++	if [ -z "$(sudo virsh list |grep RDPWindows)" ]; then
+ 		echo "RDPWindows is not running, run:"
+ 		echo "  virsh start RDPWindows"
+ 		exit
+ 	fi
+-	RDP_IP=$(virsh net-dhcp-leases default |grep RDPWindows |awk '{print $5}')
++	RDP_IP=$(sudo virsh net-dhcp-leases default |grep RDPWindows |awk '{print $5}')
+ 	RDP_IP=${RDP_IP%%\/*}
+ fi
+ 
+@@ -72,14 +82,45 @@
+ 	MULTI_FLAG="multimon"
+ fi
+ 
++xfreerdp(){
++    (
++        if [[ -f $TMP/winappslastuse ]]; then
++            rm $TMP/winappslastuse
++        fi
++        command xfreerdp "${@}" &
++        wait $!
++        ret=$?
++        if [[ $ret = 131 ]]; then
++            notify-send -t 3000 -i dialog-warning "Windows VM not ready, wait"
++        else
++            if [[ $ret != 0 ]]; then
++                notify-send -t 4000 -i dialog-warning "xfreerdp returned $ret"
++                # https://github.com/FreeRDP/FreeRDP/blob/90b3bf4891e426d422ddb0581560450013832e5e/client/X11/xfreerdp.h#L252
++            fi
++            date +%s > $TMP/winappslastuse
++            if ! pgrep xfreerdp 1>/dev/null; then
++                sudo virsh suspend RDPWindows
++                while [[ -f $TMP/winappslastuse ]] && [[ $(( $(date +%s) - $(cat $TMP/winappslastuse) )) -lt 300 ]]; do
++                    sleep 100
++                done
++                if ! [[ -f $TMP/winappslastuse ]]; then
++                    return
++                fi
++                sudo virsh managedsave RDPWindows --running
++                rm $TMP/winappslastuse
++            fi
++        fi
++    ) &
++}
++
+ if [ "${1}" = "windows" ]; then
+-	xfreerdp ${RDP_FLAGS} /d:"${RDP_DOMAIN}" /u:"${RDP_USER}" /p:"${RDP_PASS}" /v:${RDP_IP} /scale:${RDP_SCALE} /dynamic-resolution +clipboard +auto-reconnect +home-drive /wm-class:"Microsoft Windows" 1> /dev/null 2>&1 &
++	xfreerdp ${RDP_FLAGS} /d:"${RDP_DOMAIN}" /u:"${RDP_USER}" /p:"${RDP_PASS}" /v:${RDP_IP} /scale:${RDP_SCALE} /dynamic-resolution +clipboard +auto-reconnect +home-drive /wm-class:"Microsoft Windows"
+ elif [ "${1}" = "check" ]; then
+ 	dprint "CHECK"
+ 	xfreerdp ${RDP_FLAGS} /d:"${RDP_DOMAIN}" /u:"${RDP_USER}" /p:"${RDP_PASS}" /v:${RDP_IP} +auto-reconnect +clipboard +home-drive -wallpaper /scale:${RDP_SCALE} /dynamic-resolution /${MULTI_FLAG} /app:"explorer.exe"
+ elif [ "${1}" = "manual" ]; then
+ 	dprint "MANUAL:${2}"
+-	xfreerdp ${RDP_FLAGS} /d:"${RDP_DOMAIN}" /u:"${RDP_USER}" /p:"${RDP_PASS}" /v:${RDP_IP} +auto-reconnect +home-drive +clipboard -wallpaper /scale:${RDP_SCALE} /dynamic-resolution /${MULTI_FLAG} /app:"${2}" 1> /dev/null 2>&1 &
++	xfreerdp ${RDP_FLAGS} /d:"${RDP_DOMAIN}" /u:"${RDP_USER}" /p:"${RDP_PASS}" /v:${RDP_IP} +auto-reconnect +home-drive +clipboard -wallpaper /scale:${RDP_SCALE} /dynamic-resolution /${MULTI_FLAG} /app:"${2}"
+ elif [ "${1}" != "install" ]; then
+ 	dprint "DIR:${DIR}"
+ 	if [ -e "${DIR}/../apps/${1}/info" ]; then
+@@ -99,9 +140,9 @@
+ 		dprint "HOME:${HOME}"
+ 		FILE=$(echo "${2}" | sed 's|'"${HOME}"'|\\\\tsclient\\home|;s|/|\\|g;s|\\|\\\\|g')
+ 		dprint "FILE:${FILE}"
+-		xfreerdp ${RDP_FLAGS} /d:"${RDP_DOMAIN}" /u:"${RDP_USER}" /p:"${RDP_PASS}" /v:${RDP_IP} +auto-reconnect +clipboard +home-drive -wallpaper /scale:${RDP_SCALE} /dynamic-resolution /${MULTI_FLAG} /wm-class:"${FULL_NAME}" /app:"${WIN_EXECUTABLE}" /app-icon:"${ICON}" /app-cmd:"\"${FILE}\"" 1> /dev/null 2>&1 &
++		xfreerdp ${RDP_FLAGS} /d:"${RDP_DOMAIN}" /u:"${RDP_USER}" /p:"${RDP_PASS}" /v:${RDP_IP} +auto-reconnect +clipboard +home-drive -wallpaper /scale:${RDP_SCALE} /dynamic-resolution /${MULTI_FLAG} /wm-class:"${FULL_NAME}" /app:"${WIN_EXECUTABLE}" /app-icon:"${ICON}" /app-cmd:"\"${FILE}\""
+ 	else
+-		xfreerdp ${RDP_FLAGS} /d:"${RDP_DOMAIN}" /u:"${RDP_USER}" /p:"${RDP_PASS}" /v:${RDP_IP} +auto-reconnect +clipboard +home-drive -wallpaper /scale:${RDP_SCALE} /dynamic-resolution /${MULTI_FLAG} /wm-class:"${FULL_NAME}" /app:"${WIN_EXECUTABLE}" /app-icon:"${ICON}" 1> /dev/null 2>&1 &
++		xfreerdp ${RDP_FLAGS} /d:"${RDP_DOMAIN}" /u:"${RDP_USER}" /p:"${RDP_PASS}" /v:${RDP_IP} +auto-reconnect +clipboard +home-drive -wallpaper /scale:${RDP_SCALE} /dynamic-resolution /${MULTI_FLAG} /wm-class:"${FULL_NAME}" /app:"${WIN_EXECUTABLE}" /app-icon:"${ICON}"
+ 	fi
+ fi
+ 

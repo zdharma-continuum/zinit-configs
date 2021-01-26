@@ -1,0 +1,11 @@
+For some reason git would stop completing after one complete, this just redos it every time
+--- felipec---git-completion/_git	2020-10-25 20:20:07.064072866 -0400
++++ felipec---git-completion/_git-patch	2020-10-25 20:18:34.801896765 -0400
+@@ -239,6 +239,7 @@
+ 			_requested common-commands && __git_zsh_cmd_common
+ 			_requested alias-commands && __git_zsh_cmd_alias
+ 			_requested all-commands && __git_zsh_cmd_all
++			compdef _git git
+ 			let _ret || break
+ 		done
+ 		;;

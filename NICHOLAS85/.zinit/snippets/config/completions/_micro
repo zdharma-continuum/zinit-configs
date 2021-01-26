@@ -1,0 +1,23 @@
+#compdef micro
+
+# zsh completions for 'micro'
+# automatically generated with http://github.com/RobSis/zsh-completion-generator
+local arguments
+
+arguments=(
+  '-clean[cleans the configuration directory]'
+  '-config-dir[specify a custom location for the configuration directory]'
+  '-options[show all option help]'
+  '-debug[enable debug mode (enables logging to ./log.txt)]'
+  '-version[show the version number and information]'
+  '-plugin[\[PLUGIN\]...]'
+  '-plugin[\[PLUGIN\]...]'
+  '-plugin[\[PLUGIN\]...]'
+  '-plugin[\[PLUGIN\]...]'
+  '-plugin[list installed plugins]'
+  '-plugin[list available plugins]'
+  '-option[set `option` to `value` for this session]'
+  '*:filename:_files'
+)
+
+_arguments -s $arguments

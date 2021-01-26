@@ -1,0 +1,24 @@
+Allow dotbare to be symlinked
+--- kazhala---dotbare/dotbare	2020-11-08 03:51:47.379765820 -0500
++++ kazhala---dotbare/dotbare-patch	2020-11-08 03:51:12.764122189 -0500
+@@ -12,7 +12,7 @@
+ #   option flags:
+ #     check sub commands for available option flags
+
+-mydir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
++mydir="$(dirname -- "$(readlink -f -- "$BASH_SOURCE")")"
+ source "${mydir}"/helper/set_variable.sh
+
+ function usage() {
+--- kazhala---dotbare/pkg/completion/zsh/_dotbare	2020-11-23 17:46:34.913377981 -0500
++++ kazhala---dotbare/pkg/completion/zsh/_dotbare.patch	2020-11-23 17:46:32.169435684 -0500
+@@ -127,6 +127,9 @@
+             '(- : *)'{-h,--help}'[show help information]' \
+             && ret=0
+           ;;
++        *)
++          _normal
++          ;;
+       esac
+       ;;
+   esac

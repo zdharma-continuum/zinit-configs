@@ -1,0 +1,6 @@
+if $_per_directory_history_is_global; then
+    return
+else
+    p10k segment -i ''
+fi
+

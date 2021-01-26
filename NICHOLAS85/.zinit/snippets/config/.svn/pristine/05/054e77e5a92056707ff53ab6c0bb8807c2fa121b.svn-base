@@ -1,0 +1,14 @@
+Fix autoloading with Zinit, remove cdpath hook
+--- marlonrichert---zsh-edit/zsh-edit.plugin.zsh	2020-11-24 14:57:14.225191357 -0500
++++ marlonrichert---zsh-edit/zsh-edit.plugin.zsh-patch	2020-11-24 15:01:38.468808641 -0500
+@@ -6,9 +6,7 @@
+ 
+   local fdir=${${(%):-%x}:A:h}/functions
+   typeset -gU FPATH fpath=( $fdir $fpath )
+-  autoload -Uz add-zsh-hook $fdir/*~*.zwc
+-
+-  add-zsh-hook chpwd _cdpath
++  autoload -Uz add-zsh-hook $fdir/*~*.zwc(.:t)
+ 
+   local widget
+ 

@@ -1,0 +1,41 @@
+#compdef clight
+
+# zsh completions for 'clight'
+# automatically generated with http://github.com/RobSis/zsh-completion-generator
+local arguments
+
+arguments=(
+  '(-f --frames)'{-f,--frames=}'[Frames taken for each capture, Between 1 and 20]'
+  '(-d --device)'{-d,--device=}'[Path to webcam device. If empty, first matching device is usedmi]'
+  '(-b --backlight)'{-b,--backlight=}'[Path to backlight syspath. If empty, first matching device is used]'
+  '--no-backlight-smooth[Disable smooth backlight transitions]'
+  '--no-gamma-smooth[Disable smooth gamma transitions]'
+  '--no-dimmer-smooth-enter[Disable smooth dimmer transitions while entering dimmed state]'
+  '--no-dimmer-smooth-enter[Disable smooth dimmer transitions while leaving dimmed state]'
+  '(--day-temp)'--day-temp='[Daily gamma temperature, between 1000 and 10000]'
+  '(--night-temp)'--night-temp='[Nightly gamma temperature, between 1000 and 10000]'
+  '(--lat)'--lat='[Your desired latitude]'
+  '(--lon)'--lon='[Your desired longitude]'
+  '(--sunrise)'--sunrise='[Force sunrise time for gamma correction]'
+  '(--sunset)'--sunset='[Force sunset time for gamma correction]'
+  '--no-gamma[Disable gamma correction tool]'
+  '--no-dimmer[Disable dimmer tool]'
+  '--no-dpms[Disable dpms tool]'
+  '--no-backlight[Disable backlight module]'
+  '--no-screen[Disable screen module]'
+  '--no-kbd[Disable keyboard backlight calibration]'
+  '(--dimmer-pct)'--dimmer-pct='[Backlight level used while screen is dimmed, in percentage]'
+  '--verbose[Enable verbose mode]'
+  '--no-auto-calib[Disable screen backlight automatic calibration]'
+  '(--shutter-thres)'--shutter-thres='[Threshold to consider a capture as clogged]'
+  '(-v --version)'{-v,--version}'[Show version info]'
+  '(-c --conf-file)'{-c,--conf-file=}'[Specify a conf file to be parsed]'
+  '--gamma-long-transition[Enable a very long smooth transition for gamma]'
+  '--ambient-gamma[Enable screen temperature matching ambient brightness instead of time]'
+  '(-w --wizard)'{-w,--wizard}'[Enable wizard mode]'
+  '(-? --help)'{-?,--help}'[Show help message]'
+  '--usage[Display brief usage message]'
+  '*:: :->argument'
+)
+
+_arguments -s $arguments
