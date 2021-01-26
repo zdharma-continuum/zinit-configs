@@ -1,0 +1,3 @@
+emulate -L zsh
+
+dir_history=("${1%%$'\n'}" "${(u)dir_history[@]}" )

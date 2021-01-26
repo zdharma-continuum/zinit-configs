@@ -1,0 +1,24 @@
+--- changyuheng---fz/fz.sh	2020-07-21 01:00:05.985292796 -0400
++++ changyuheng---fz/fz.sh-patch	2020-08-24 04:21:02.276684891 -0400
+@@ -271,15 +271,15 @@
+ 
+ _fz() {
+   local rc
+-  if [[ "$($FZ_HISTORY_LIST_GENERATOR "$@" | head | wc -l)" -gt 0 ]]; then
+-    "$FZ_HISTORY_CD_CMD" "$@"
++  local err
++  local zmatch="$($FZ_HISTORY_LIST_GENERATOR "${@%/}" | head -n1)"
++  if [[ ${#zmatch} -gt 0 ]]; then
++      "$FZ_HISTORY_CD_CMD" "${@%/}"
+   elif [[ "$FZ_SUBDIR_TRAVERSAL" -ne 0 ]]; then
+-    err=$(cd "${@: -1}" 2>&1)
+-    rc=$?
+-    if ! cd "${@: -1}" 2>/dev/null; then
++      zmatch="$($FZ_HISTORY_LIST_GENERATOR "${@[0,-2]}" | head -n1)"
++      (){ cd "$zmatch/"*"${@: -1}"*"/" 2> $1; rc=$? err=$(<$1);} =(:) "${@}"
+       echo ${err#* } >&2
+       return $rc
+-    fi
+   fi
+ }
+ 

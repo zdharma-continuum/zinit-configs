@@ -1,0 +1,20 @@
+--- "zinit-zsh---z-a-bin-gem-node/\342\206\222za-bgn-atdelete-handler"	2020-11-08 17:51:29.893155968 -0500
++++ "zinit-zsh---z-a-bin-gem-node/\342\206\222za-bgn-atdelete-handler-patch"	2020-11-08 17:51:25.881202480 -0500
+@@ -14,14 +14,14 @@
+ # sbin'' ice – creation of shims (the name borrowed from rbenv)
+ #
+ 
+-if (( ${+ICE[sbin]} )) {
++if (( ${+ICE2[sbin]} )) {
+     local -a sbins srcdst
+-    sbins=( ${(s.;.)ICE[sbin]} )
++    sbins=( ${(s.;.)ICE2[sbin]} )
+ 
+     local sbin
+     integer set_gem_home set_node_path
+ 
+-    ( 
++    (
+         builtin cd -q "$dir"
+         for sbin ( $sbins "" ) {
+             if [[ -z $sbin && ${#sbins} -eq 0 ]]; then

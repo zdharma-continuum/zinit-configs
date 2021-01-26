@@ -1,0 +1,12 @@
+Remove overwriting bindkey
+--- hlissner---zsh-autopair/autopair.zsh	2020-11-06 16:54:27.410262798 -0500
++++ hlissner---zsh-autopair/autopair.zsh-patch	2020-11-06 16:54:41.395204729 -0500
+@@ -211,8 +211,6 @@
+     done
+ 
+     bindkey "^?" autopair-delete
+-    bindkey "^h" autopair-delete
+     bindkey -M isearch "^?" backward-delete-char
+-    bindkey -M isearch "^h" backward-delete-char
+ }
+ [[ -n $AUTOPAIR_INHIBIT_INIT ]] || autopair-init

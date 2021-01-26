@@ -1,0 +1,30 @@
+Optimize
+--- kadaan---per-directory-history/per-directory-history.zsh	2020-08-24 05:35:33.232756679 -0400
++++ kadaan---per-directory-history/per-directory-history-patch	2020-08-24 05:37:48.008288237 -0400
+@@ -46,7 +46,7 @@
+ 	if ! $_per_directory_history_is_global
+ 	then
+ 		fc -P
+-		mkdir -p ${_per_directory_history_path:h}
++		[ -d ${_per_directory_history_path:h} ] || mkdir -p ${_per_directory_history_path:h}
+ 		fc -p $_per_directory_history_path
+ 	fi
+ }
+@@ -73,7 +73,7 @@
+ 			local fn
+ 			if $_per_directory_history_is_global
+ 			then
+-				mkdir -p ${_per_directory_history_path:h}
++				[ -d ${_per_directory_history_path:h} ] || mkdir -p ${_per_directory_history_path:h}
+ 				fn=$_per_directory_history_path
+ 			else
+ 				fn=$_per_directory_history_main_histfile
+@@ -96,7 +96,7 @@
+ function _per-directory-history-set-directory-history() {
+ 	fc -P
+ 
+-	mkdir -p ${_per_directory_history_path:h}
++	[ -d ${_per_directory_history_path:h} ] || mkdir -p ${_per_directory_history_path:h}
+ 	fc -p $_per_directory_history_path
+ 	_per_directory_history_is_global=false
+ }

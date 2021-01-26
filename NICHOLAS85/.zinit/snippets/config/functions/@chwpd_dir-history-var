@@ -1,0 +1,7 @@
+emulate -L zsh
+
+if [[ -r "$_per_directory_history_path" ]]; then
+    fc -a -p "$_per_directory_history_path"
+fi
+
+dir_history=("${history[@]}")

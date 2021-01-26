@@ -1,0 +1,8 @@
+--- empty	1969-12-31 19:00:00.000000000 -0500
++++ dandavison---delta/git-dsf	2020-11-24 02:51:43.973724962 -0500
+@@ -0,0 +1,5 @@
++#!/bin/sh
++
++[ -z "$GIT_PREFIX" ] || \
++        cd "$GIT_PREFIX" && \
++            git diff --color "$@" | delta --diff-so-fancy

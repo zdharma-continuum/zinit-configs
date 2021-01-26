@@ -1,0 +1,48 @@
+#compdef pmm
+# zsh tab completion for pmm
+#
+#      This program is free software; you can redistribute it and/or
+#      modify it under the terms of the GNU General Public License
+#      version 2 as published by the Free Software Foundation.
+#
+
+# zsh-ism: this file is effectively a function.
+# shellcheck disable=SC2168
+local -a args
+args=(
+	# Flags
+	'--assume-no:assume no at prompts'
+	'(-y --yes --assume-yes)'{-y,--yes,--assume-yes}'[assume yes at prompts]'
+	'(-q --quiet)'{-q,--quiet}'[lesson output verbosity]'
+	'(--strat --stratum)'{--strat,--stratum}'[restrict to <stratum>]'
+	'(--pm --package-manager)'{--pm,--package-manager}'[restrict to <pm>]'
+	'--every:operate on every available instance of items'
+	'--newest:select newest corresponding versions of items'
+	'--oldest:select oldest corresponding versions of items'
+	'--approx-version:only consider items with a version prefixed by <version>'
+	'--exact-version:only consider items that are exactly <version>'
+	'--newer-or-equal:only consider items that are newer than or equal to <version>'
+	'--newer-than:only consider items that are newer than <version>'
+	'--older-or-equal:only consider items that are older than or equal to <version>'
+	'--older-than:only consider items that are older than <version>'
+	"--diff-world:print differences between /bedrock/etc/world and system's explicitly installed packages"
+	'--update-world-installed:populate /bedrock/etc/world with missing explicitly installed packages'
+	'--update-world-removed:remove /bedrock/etc/world items that do not correspond to explicitly installed packages'
+	"--update-world:sync /bedrock/etc/world to system's explicitly installed package list"
+	'--apply-world-installed:explicitly install /bedrock/etc/world items'
+	'--apply-world-removed:remove packages not in /bedrock/etc/world and resulting orphan packages'
+	"--apply-world:sync system's explicitly installed package list to /bedrock/etc/world and remove orphans"
+	'--check-pmm-configuration:sanity check pmm configuration'
+	'--list-pmm-ui-files:list expected front-end files with current user interface'
+	'(-h --help)'{-h,--help}'[print help message]'
+	# Stratum
+	#'(-)1:operations:_pmm_list_operations'
+	# Command to run from stratum
+	#'2:command:_strat_local_cmds'
+	# Parameters for command being run from specified stratum
+	#'*::parameters:_strat_local_params'
+)
+
+# zsh-ism: we want it to expand here
+# shellcheck disable=SC2128,SC2086
+_arguments ${args}

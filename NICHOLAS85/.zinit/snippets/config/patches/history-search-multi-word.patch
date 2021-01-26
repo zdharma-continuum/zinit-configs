@@ -1,0 +1,34 @@
+Partially support per_directory_history, fix trap for SIGINT
+--- zdharma---history-search-multi-word/history-search-multi-word	2020-11-05 23:01:31.568455761 -0500
++++ zdharma---history-search-multi-word/history-search-multi-word-patch	2020-11-05 23:01:18.603608347 -0500
+@@ -169,7 +169,11 @@
+         # Colorify
+         #
+ 
+-        local preamble=$'\n'"Ctrl-K – context, Ctrl-J – bump. Entry #$__hsmw_hcw_index of $max_index"$'\n'
++        local history_type=""
++        if (( ${+_per_directory_history_is_global} )); then
++          history_type=", Ctrl-G – ${${_per_directory_history_is_global/false/global}/true/local}"
++        fi
++        local preamble=$'\n'"Ctrl-K – context, Ctrl-J – bump$history_type. Entry #$__hsmw_hcw_index of $max_index"$'\n'
+         integer offset=${#preamble}+${#BUFFER}
+         POSTDISPLAY="$preamble$text"
+ 
+@@ -408,7 +412,7 @@
+     trap '(( __hsmw_recedit_trap_executed == 0 )) && zle && { __hsmw_recedit_trap_executed=1; zle .send-break; }' INT
+ 
+     if zle .recursive-edit -K hsmw; then
+-        trap '' INT
++        trap - INT
+ 
+         if [[ "$__hsmw_hcw_index" -gt "0" ]]; then
+             if (( __hsmw_ctx )); then
+@@ -427,7 +431,7 @@
+             unset __hsmw_conc
+         fi
+     else
+-        trap '' INT
++        trap - INT
+         (( __hsmw_conc )) && BUFFER=""
+         unset __hsmw_conc
+     fi

@@ -1,0 +1,1 @@
+[[ $EUID -ne 0 ]] && rm-trash -I -v "${@}" || command rm -I -v "${@}"

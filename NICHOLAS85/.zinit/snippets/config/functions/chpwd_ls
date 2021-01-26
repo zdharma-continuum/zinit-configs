@@ -1,0 +1,4 @@
+emulate -L zsh
+if [[ "$OLDPWD" != "$PWD" ]]; then
+    lsd --group-dirs=first
+fi
