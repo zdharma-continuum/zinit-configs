@@ -42,7 +42,7 @@ You can either:
 
  - open a PR – fastest method
  - submit an issue with URL to the zshrc (or with the zshrc pasted) – [a quick
-   link](https://github.com/zdharma/zinit-configs/issues/new?assignees=&labels=&template=request-to-add-zshrc-to-the-zinit-configs-repo.md)
+   link](https://github.com/zdharma-continuum/zinit-configs/issues/new?assignees=&labels=&template=request-to-add-zshrc-to-the-zinit-configs-repo.md)
 
 # The repository structure
 
@@ -87,7 +87,7 @@ script:
 
 ```sh
 # Clone repository with configurations
-git clone 'https://github.com/zdharma/zinit-configs'
+git clone 'https://github.com/zdharma-continuum/zinit-configs'
 # Run the configuration picker
 ./zinit-configs/run.sh
 ```

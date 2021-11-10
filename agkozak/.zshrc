@@ -284,7 +284,7 @@ if (( AGKDOT_NO_ZPLUGIN != 1 )) && is-at-least 5; then
     if [[ ! -d ${HOME}/.zinit/bin ]]; then
       print 'Installing zinit...'
       mkdir -p "${HOME}/.zinit"
-      git clone https://github.com/zdharma/zinit.git "${HOME}/.zinit/bin"
+      git clone https://github.com/zdharma-continuum/zinit.git "${HOME}/.zinit/bin"
       compile_or_recompile "${HOME}/.zinit/bin/zinit.zsh"
     fi
 
