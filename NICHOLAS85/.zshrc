@@ -59,8 +59,8 @@ zt light-mode blockf svn id-as for \
 # zcompile doesn't support Unicode file names, planned on using compile'*handler' ice.
 # https://www.zsh.org/mla/workers/2020/msg01057.html
 zt light-mode for \
-        zinit-zsh/z-a-patch-dl \
-        zinit-zsh/z-a-submods \
+        zdharma-continuum/zinit-annex-patch-dl \
+        zdharma-continuum/zinit-annex-submods \
         NICHOLAS85/z-a-linkman \
         NICHOLAS85/z-a-linkbin
 
@@ -71,7 +71,7 @@ zt light-mode for \
             id-as"${1}-theme" \
             atinit"[[ -f ${thmf}/${1}-pre.zsh ]] && source ${thmf}/${1}-pre.zsh" \
             atload"[[ -f ${thmf}/${1}-post.zsh ]] && source ${thmf}/${1}-post.zsh" \
-                zdharma/null
+                zdharma-continuum/null
     } || print -P "%F{220}Theme \"${1}\" not found%f"
 } "${MYPROMPT=p10k}"
 
@@ -135,7 +135,7 @@ zt 0b light-mode patch"${pchf}/%PLUGIN%.patch" reset nocompile'!' for \
     add-zsh-hook zshaddhistory @append_dir-history-var; @chwpd_dir-history-var' \
         kadaan/per-directory-history \
     compile'h*' \
-        zdharma/history-search-multi-word \
+        zdharma-continuum/history-search-multi-word \
     trackbinds bindmap'\e[1\;6D -> ^[[1\;5B; \e[1\;6C -> ^[[1\;5A' \
         michaelxmcbride/zsh-dircycle \
     blockf nocompletions compile'functions/*~*.zwc' \
@@ -150,7 +150,7 @@ zt 0b light-mode for \
     atinit'zicompinit_fast; zicdreplay' atload'FAST_HIGHLIGHT[chroma-man]=' \
     atclone'(){local f;cd -q →*;for f (*~*.zwc){zcompile -Uz -- ${f}};}' \
     compile'.*fast*~*.zwc' nocompletions atpull'%atclone' \
-        zdharma/fast-syntax-highlighting \
+        zdharma-continuum/fast-syntax-highlighting \
     pick'autoenv.zsh' nocompletions \
         Tarrasch/zsh-autoenv \
     atload'bindkey "${terminfo[kcuu1]}" history-substring-search-up;
@@ -203,4 +203,4 @@ zt 0c light-mode null for \
     lbin from'gh-r' dl'https://raw.githubusercontent.com/junegunn/fzf/master/man/man1/fzf.1' lman \
         junegunn/fzf \
     id-as'Cleanup' nocd atinit'unset -f zt; _zsh_autosuggest_bind_widgets' \
-        zdharma/null
+        zdharma-continuum/null
