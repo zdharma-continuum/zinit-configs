@@ -7,107 +7,96 @@
 # Open an issue in https://github.com/vladdoster/dotfiles if
 # you find a bug, have a feature request, or a question.
 #
-# sources various parts of zsh configuration
-#
-#=== HISTORY =============================================
-#!/usr/bin/env zsh
-#
-# Author: Vladislav D.
-# GitHub: vladdoster
-#   Repo: https://dotfiles.vdoster.com
-#
-# Open an issue in https://github.com/vladdoster/dotfiles if
-# you find a bug, have a feature request, or a question.
-#
 # A zinit-continuum configuration for macOS and Linux.
 #
-function info() { echo '[INFO] '; }
-function error() { echo '[ERROR] '; }
-case "$OSTYPE" in
-  linux-gnu) bpick='*((#s)|/)*(linux|musl)*((#e)|/)*' ;;
-    darwin*) bpick='*(macos|darwin)*' ;;
-    *) error 'unsupported system -- some cli programs might not work' ;;
-esac
-#=== ZINIT =============================================
-ZINIT_HOME="${XDG_DATA_HOME:-${HOME:-~/.local/share}}/zinit"
-ZINIT_BIN_DIR_NAME="${ZINIT_BIN_DIR_NAME:-bin}"
-if [[ ! -f "${ZINIT_HOME}/${ZINIT_BIN_DIR_NAME}/zinit.zsh" ]]; then
-  info 'installing zinit' \
-    && command mkdir -p "${ZINIT_HOME}" \
-    && command chmod g-rwX "${ZINIT_HOME}" \
-    && command git clone --depth 1 --branch main https://github.com/${ZINIT_REPO:-vladdoster}/zinit-1 "${ZINIT_HOME}/${ZINIT_BIN_DIR_NAME}" \
-  && info 'installed zinit' \
-  || error 'git not found' >&2
+#=== HELPER METHODS ===================================
+function error() { print -P "%F{160}[ERROR] ---%f%b $1" >&2 && exit 1; }
+function info() { print -P "%F{34}[INFO] ---%f%b $1"; }
+#=== ZINIT ============================================
+typeset -gAH ZINIT;
+ZINIT[HOME_DIR]=$XDG_DATA_HOME/zsh/zinit  ZPFX=$ZINIT[HOME_DIR]/polaris
+ZINIT[BIN_DIR]=$ZINIT[HOME_DIR]/zinit.git ZINIT[OPTIMIZE_OUT_DISK_ACCESSES]=1
+ZINIT[COMPLETIONS_DIR]=$ZINIT[HOME_DIR]/completions ZINIT[SNIPPETS_DIR]=$ZINIT[HOME_DIR]/snippets
+ZINIT[ZCOMPDUMP_PATH]=$ZINIT[HOME_DIR]/zcompdump    ZINIT[PLUGINS_DIR]=$ZINIT[HOME_DIR]/plugins
+ZI_REPO='zdharma-continuum'; GH_RAW_URL='https://raw.githubusercontent.com'
+if [[ ! -e $ZINIT[BIN_DIR] ]]; then
+  info 'Downloading Zinit' \
+    && command git clone \
+        --branch 'bugfix/system-gh-r-selection' \
+        https://github.com/$ZI_REPO/zinit \
+        $ZINIT[BIN_DIR] \
+    || error 'Unable to download zinit' \
+    && info 'Installing Zinit' \
+    && command chmod g-rwX $ZINIT[HOME_DIR] \
+    && zcompile $ZINIT[BIN_DIR]/zinit.zsh \
+    && info 'Successfully installed Zinit' \
+    || error 'Unable to install Zinit'
 fi
-autoload -U +X bashcompinit && bashcompinit
-source "${ZINIT_HOME}/${ZINIT_BIN_DIR_NAME}/zinit.zsh" \
+source $ZINIT[BIN_DIR]/zinit.zsh \
   && autoload -Uz _zinit \
   && (( ${+_comps} )) \
   && _comps[zinit]=_zinit
-zturbo(){ zinit depth'1' lucid ${1/#[0-9][a-d]/wait"${1}"} "${@:2}"; }
-ZINIT_REPO="zdharma-continuum"
-#=== PROMPT & THEME ====================================
-zi light-mode for \
-  compile'(pure|async).zsh' pick'async.zsh' src'pure.zsh' atload"
-      PURE_GIT_UP_ARROW='↑'; PURE_GIT_DOWN_ARROW='↓'; PURE_PROMPT_SYMBOL='ᐳ'; PURE_PROMPT_VICMD_SYMBOL='ᐸ';
-      zstyle ':prompt:pure:git:action' color 'yellow'; zstyle ':prompt:pure:git:branch' color 'blue'; zstyle ':prompt:pure:git:dirty' color 'red'
-      zstyle ':prompt:pure:path' color 'cyan'; zstyle ':prompt:pure:prompt:success' color 'green'" \
+#=== ZSH BINARY =======================================
+zi for \
+    as"null" atclone"./install -e no -d ~/.local" atinit'export PATH="/Users/anonymous/.local/bin:$PATH"' atpull"%atclone" \
+    depth"1" \
+    lucid \
+    nocompile nocompletions \
+  @romkatv/zsh-bin
+#=== OH-MY-ZSH & PREZTO PLUGINS =======================
+zinit for \
+    OMZL::{'clipboard','compfix','completion','git','grep','key-bindings','termsupport'}.zsh \
+    PZT::modules/{'history','rsync'}
+#=== PROMPT & THEME ===================================
+zi light-mode silent for \
+    compile'(pure|async).zsh' multisrc'(pure|async).zsh' atinit"
+        PURE_GIT_DOWN_ARROW='↓'; PURE_GIT_UP_ARROW='↑'
+        PURE_PROMPT_SYMBOL='ᐳ'; PURE_PROMPT_VICMD_SYMBOL='ᐸ'
+        zstyle ':prompt:pure:git:action' color 'yellow'
+        zstyle ':prompt:pure:git:branch' color 'blue'
+        zstyle ':prompt:pure:git:dirty' color 'red'
+        zstyle ':prompt:pure:path' color 'cyan'
+        zstyle ':prompt:pure:prompt:success' color 'green'" \
     sindresorhus/pure \
-    ${ZINIT_REPO}/zinit-annex-submods \
-    ${ZINIT_REPO}/zinit-annex-patch-dl \
-    ${ZINIT_REPO}/zinit-annex-bin-gem-node
-#=== GIT ===============================================
-zi ice svn; zi snippet OMZ::plugins/git
-zi snippet OMZ::plugins/git/git.plugin.zsh
-#=== OSX ===============================================
-zi ice if'[[ $OSTYPE = darwin* ]]' svn; zi snippet PZTM::gnu-utility
-#=== PIP ===============================================
-zi snippet OMZP::pip
-zi ice as'completion'; zi snippet OMZP::pip/_pip
-#=== MISC. =============================================
-zturbo 0a light-mode for \
-  atload'
-      bindkey "^[[A" history-substring-search-up
-      bindkey "^[[B" history-substring-search-down' \
-    zsh-users/zsh-history-substring-search \
-  ver'develop' atinit'ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20' atload'_zsh_autosuggest_start' \
-    zsh-users/zsh-autosuggestions \
-  is-snippet atload'zstyle ":completion:*" special-dirs false' \
-    PZTM::completion \
-  atload"zicompinit; zicdreplay" blockf \
-    zsh-users/zsh-completions \
-  blockf atpull'zinit creinstall -q .' \
-    zdharma-continuum/fast-syntax-highlighting
-#=== FZF ==============================================
-zi wait'0b' lucid from"gh-r" as"program" for \
-    @junegunn/fzf
-zi ice wait'0a' lucid; zi snippet https://github.com/junegunn/fzf/blob/master/shell/key-bindings.zsh
-zi ice wait'1a' lucid; zi snippet https://github.com/junegunn/fzf/blob/master/shell/completion.zsh
-zi wait'1a' lucid pick"fzf-extras.zsh"        light-mode for \
-    @atweiden/fzf-extras
-zi wait'0c' lucid pick"fzf-finder.plugin.zsh" light-mode for \
-    @leophys/zsh-plugin-fzf-finder
-#=== BINARIES ==========================================
-zturbo 1a from"gh-r" as'program' for \
-  pick"delta*/delta"             dandavison/delta        \
-  pick'git-sizer'                @github/git-sizer       \
-  pick'grex'                     pemistahl/grex          \
-  pick'shfmt'  bpick"${bpick}"   @mvdan/sh               \
-  pick"tree-sitter*/tree-sitter" tree-sitter/tree-sitter
-
-zturbo 1b from'gh-r' as"command" for \
-  mv'bat* bat'             sbin'**/bat -> bat'             @sharkdp/bat       \
-  mv'fd* fd'               sbin'**/fd -> fd'               @sharkdp/fd        \
-  mv'hyperfine* hyperfine' sbin'**/hyperfine -> hyperfine' @sharkdp/hyperfine \
-  mv'rip* ripgrep'         sbin'**/rg -> rg'               BurntSushi/ripgrep \
-  mv'nvim* nvim'           sbin"**/bin/nvim -> nvim"       bpick"${bpick}"    \
-  atload'export EDITOR="nvim"
-         alias v="${EDITOR}"' \
-    neovim/neovim \
-  sbin'**/exa -> exa'      atclone'cp -vf completions/exa.zsh _exa' \
-  atload"alias ls='exa --git --group-directories-first'
-         alias l='ls -blF'
-         alias la='ls -abghilmu'
-         alias ll='ls -al'
-         alias tree='exa --tree'" \
+    "$ZI_REPO"/zinit-annex-{'bin-gem-node','patch-dl','submods'} \
+    OMZP::brew
+#=== FZF  =============================================
+zi for \
+  from'gh-r' nocompile junegunn/fzf \
+  https://github.com/junegunn/fzf/raw/master/shell/{'completion','key-bindings'}.zsh
+#=== GITHUB BINARIES ==================================
+zi from'gh-r' nocompile for \
+    sbin'**/d*a'   dandavison/delta \
+    sbin'**/nvim'  atload'alias v=nvim' ver'nightly' neovim/neovim \
+    sbin'**/sh* -> shfmt' @mvdan/sh  \
+    sbin'd*y*   -> dry'   moncho/dry \
+    sbin'**/exa'  atclone'cp -vf completions/exa.zsh _exa' atinit"
+        alias l='exa -blF'; alias la='exa -abghilmu'
+        alias ll='exa -al'; alias tree='exa --tree'
+        alias ls='exa --git --group-directories-first'" \
     ogham/exa
+#=== MISC. ============================================
+zi light-mode for \
+    thewtex/tmux-mem-cpu-load \
+    atinit"VI_MODE_SET_CURSOR=true; bindkey -M vicmd '^e' edit-command-line" is-snippet OMZ::plugins/vi-mode \
+    svn submods'zsh-users/zsh-history-substring-search -> external' OMZ::plugins/history-substring-search \
+    blockf atpull'zinit creinstall -q .' \
+    atinit'
+            zstyle ":completion:*" group-name ""
+            zstyle ":completion:*" list-colors ${(s.:.)LS_COLORS}
+            zstyle ":completion:*" menu select
+            zstyle ":completion:*" verbose yes
+            zstyle ":completion:*:corrections" format "%B%d (errors: %e)%b"
+            zstyle ":completion:*:descriptions" format "[%d]"
+            zstyle ":completion:*:messages" format "[%d]"
+            zstyle ":completion:*:warnings" format "$fg[red]No matches for:$reset_color %d"
+            zstyle -d ":completion:*" format' \
+        zsh-users/zsh-completions \
+    atinit"bindkey '^_' autosuggest-execute; bindkey '^ ' autosuggest-accept; ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20" \
+        zsh-users/zsh-autosuggestions \
+    atinit" typeset -gA FAST_HIGHLIGHT; FAST_HIGHLIGHT[git-cmsg-len]=100; zpcompinit; zpcdreplay;" $ZI_REPO/fast-syntax-highlighting
+#=== COMPLETIONS ======================================
+GH_RAW_URL='https://raw.githubusercontent.com'
+zi is-snippet as'completion' for \
+  OMZP::{'golang/_golang','pip/_pip','terraform/_terraform'} \
+  $GH_RAW_URL/{'Homebrew/brew/master/completions/zsh/_brew','docker/cli/master/contrib/completion/zsh/_docker','rust-lang/cargo/master/src/etc/_cargo'}
