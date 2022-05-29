@@ -6,7 +6,7 @@ on:
       - vladdoster/.zshrc
 
 jobs:
-  Test vladdoster config:
+  test_vladdoster_config:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
