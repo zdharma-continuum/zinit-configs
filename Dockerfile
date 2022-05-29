@@ -6,7 +6,7 @@ RUN apt update && \
     apt install -yq \
         ncurses-dev man telnet unzip zsh git subversion curl make sudo locales \
         autoconf automake python golang-go \
-        vim htop
+        vim htop cmake
 
 # Set the locale
 RUN sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen && \
@@ -27,6 +27,7 @@ RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/zdharma/zinit/master/d
 
 # Copy configs into home directory
 ARG FOLDER
+ENV XDG_DATA_HOME /home/user/.local/share
 COPY --chown=user "${FOLDER}" /home/user
 # Copy of a possible .zshrc named according to a non-leading-dot scheme
 RUN cp -vf /home/user/zshrc.zsh /home/user/.zshrc 2>/dev/null || true
