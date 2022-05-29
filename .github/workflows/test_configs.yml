@@ -3,6 +3,8 @@ name: Test vladdoster config
 on:
   push:
     paths:
+      - .github/workflows/test_configs.yml
+      - Dockerfile
       - vladdoster/.zshrc
 
 jobs:
