@@ -28,7 +28,7 @@ RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/zdharma/zinit/master/d
 # Copy configs into home directory
 ARG FOLDER
 ENV XDG_DATA_HOME /home/user/.local/share
-COPY --chown=user "${FOLDER}" /home/user
+COPY --chown=user ./${FOLDER} /home/user
 # Copy of a possible .zshrc named according to a non-leading-dot scheme
 RUN cp -vf /home/user/zshrc.zsh /home/user/.zshrc 2>/dev/null || true
 
