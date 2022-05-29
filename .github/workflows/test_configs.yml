@@ -1,0 +1,27 @@
+name: Test configs
+
+on:
+  push:
+    paths:
+      - .github/workflows/test_configs.yml
+      - Dockerfile
+      - vladdoster/.zshrc
+      - numToStr/zshrc.zsh
+
+jobs:
+  test_zshrc_config:
+    strategy:
+      fail-fast: false
+      matrix:
+        author: [vladdoster, numToStr]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v3
+
+      - name: Test ${{ matrix.author }}'s config
+        run: |
+          docker build \
+            --build-arg FOLDER="${{ matrix.author }}" \
+            --build-arg TERM="${TERM}" \
+            -t "zplg-configs:${{ matrix.author }}" .

@@ -97,7 +97,7 @@ zi from'gh-r' lbin'!' nocompile for \
   lbin'!**/rg'       @BurntSushi/ripgrep \
   lbin atinit"
     alias ll='exa -al';
-    alias l='exa -blF'; 
+    alias l='exa -blF';
     alias la='exa -abghilmu';
     alias ls='exa --git --group-directories-first'" \
   @ogham/exa
@@ -107,8 +107,8 @@ zi as'command' light-mode for \
   pick'zunit' atclone'./build.zsh' @zunit-zsh/zunit
 #=== COMPILED PROGRAMS ================================
 zi lucid make'PREFIX=$PWD install' nocompile for \
-  lbin'!**/tree' Old-Man-Programmer/tree \
-  lbin'!**/zsd' $ZI_REPO/zshelldoc
+  lbin'!**/tree*' Old-Man-Programmer/tree \
+  lbin'!**/zsd*' $ZI_REPO/zshelldoc
 #=== PYTHON ===========================================
 function _pip_completion {
   local words cword; read -Ac words; read -cn cword
