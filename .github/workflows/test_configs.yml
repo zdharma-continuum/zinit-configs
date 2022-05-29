@@ -28,6 +28,7 @@ jobs:
       - name: Build
         uses: docker/build-push-action@v3
         with:
+          context: .
           push: false
           file: Dockerfile
           tags: "zplg-configs:vladdoster"
