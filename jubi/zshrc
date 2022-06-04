@@ -1,3 +1,4 @@
+#!/usr/bin/env zsh
 ### Added by Zinit's installer
 source ~/.zinit/bin/zinit.zsh
 autoload -Uz _zinit
