@@ -1,30 +1,22 @@
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+# Zinit Configurations<a name="zinit-configurations"></a>
 
-- [zinit-configs](#zinit-configs)
-  - [Pull-requests welcomed!](#pull-requests-welcomed)
+<!-- mdformat-toc start --slug=github --maxlevel=6 --minlevel=2 -->
+
 - [Searching the repository](#searching-the-repository)
-  - [OR ...](#or-)
 - [Submitting zshrc](#submitting-zshrc)
 - [The repository structure](#the-repository-structure)
-- [Try configurations with docker](#try-configurations-with-docker)
   - [Requirements](#requirements)
-  - [Running a configuration](#running-a-configuration)
+  - [fzf](#fzf)
+  - [fzy](#fzy)
+- [Running a configuration](#running-a-configuration)
 
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+<!-- mdformat-toc end -->
 
-# zinit-configs
+## Searching the repository<a name="searching-the-repository"></a>
 
-<h2>Pull-requests welcomed!</h2>
-
-Feel free to submit your zshrc if it contains `zinit` commands.
-
-# Searching the repository
-
-Use the Github search interface – just enter a query e.g. "trapd00r/LS_COLORS"
-like in the picture below, to find zshrc with references to this plugin, and
-ensure that you activate the "*in this repository*" variant of the search:
+Use the Github search interface – just enter a query (i.e., `trapd00r/LS_COLORS` like in the picture
+below, to find zshrc with references to this plugin, and ensure that you activate the "*in this
+repository*" variant of the search:
 
 ![Starting search](https://raw.githubusercontent.com/zdharma-continuum/zinit-configs/img/srch.png)
 
@@ -32,77 +24,68 @@ Then, results should appear like below:
 
 ![Search results](https://raw.githubusercontent.com/zdharma-continuum/zinit-configs/img/srch-rslt.png)
 
-## OR ...
+## Submitting zshrc<a name="submitting-zshrc"></a>
 
-just clone the repository and issue `ack`, `ag` or `grep` command :)
+Open a PR
 
-# Submitting zshrc
+## The repository structure<a name="the-repository-structure"></a>
 
-You can either:
+The structure of the repository is very simple: in its main directory there are directories located,
+named after the user-names of the submitting users. In those directories there are the zshrc files
+that the user decided to share.
 
- - open a PR – fastest method
- - submit an issue with URL to the zshrc (or with the zshrc pasted) – [a quick
-   link](https://github.com/zdharma-continuum/zinit-configs/issues/new?assignees=&labels=&template=request-to-add-zshrc-to-the-zinit-configs-repo.md)
+### Requirements<a name="requirements"></a>
 
-# The repository structure
+You should have [docker](https://docs.docker.com/install/) and `zsh` installed to use this
+functionality.
 
-The structure of the repository is very simple: in its main directory there are
-directories located, named after the user-names of the submitting users. In
-those directories there are the zshrc files that the user decided to share.
+[fzf](https://github.com/junegunn/fzf) or [fzy](https://github.com/jhawthorn/fzy) in your `$PATH`.
+You might choose to install any of them via zinit:
 
-# Try configurations with docker
+### fzf<a name="fzf"></a>
 
-## Requirements
-
-You should have [docker](https://docs.docker.com/install/) and `zsh` installed
-to use this functionality. Check you have them present on your system:
-
-```sh
-docker version
-zsh --version
+```
+zinit for \
+    as"command" \
+    from"gh-r" \
+    load \
+  @junegunn/fzf-bin
 ```
 
-The other dependency is interactive filter. You should have either
-[fzf](https://github.com/junegunn/fzf) or
-[fzy](https://github.com/jhawthorn/fzy) in your `$PATH`. You might choose to
-install any of them via zinit:
+### fzy<a name="fzy"></a>
 
-```sh
-# Install fzf
-zinit ice from"gh-r" as"command"
-zinit load junegunn/fzf-bin
-# or fzy
-zinit ice as"command" make"\!PREFIX=$ZPFX install" \
+```zsh
+zinit for \
+    as"command" \
     atclone"cp contrib/fzy-* $ZPFX/bin/" \
-    pick"$ZPFX/bin/fzy*"
-zinit load jhawthorn/fzy
+    load \
+    make"!PREFIX=$ZPFX install" \
+    pick"$ZPFX/bin/fzy*" \
+  @jhawthorn/fzy
 ```
 
 Keep in mind you will need a few Gb of free space to store docker images.
 
-## Running a configuration
+## Running a configuration<a name="running-a-configuration"></a>
 
-To try a configuration, you have to clone this repository and execute a `run.sh`
-script:
+To try a configuration, you have to clone this repository and execute a `run.sh` script:
 
-```sh
+```zsh
 # Clone repository with configurations
-git clone 'https://github.com/zdharma-continuum/zinit-configs'
+git clone https://github.com/zdharma-continuum/zinit-configs
 # Run the configuration picker
 ./zinit-configs/run.sh
 ```
 
-… or you can install this repository as a `zsh` plugin!
+Or you can install this repository as a `zsh` plugin!
 
-```sh
+```zsh
 # Then, install this repo
 zinit load zdharma-continuum/zinit-configs
 # Run the command
 zinit-configs
 ```
 
-Now you will have to wait for a few minutes, while the required environment is
-being installed into the docker image. The next time you will want to try
-a configuration, loading it will take less time.
-
-<!-- vim:set ft=markdown tw=80 fo+=a1n autoindent: -->
+Now you will have to wait for a few minutes, while the required environment is being installed into
+the docker image. The next time you will want to try a configuration, loading it will take less
+time.
