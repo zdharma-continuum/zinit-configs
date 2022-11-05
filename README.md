@@ -26,11 +26,11 @@ Use the Github search interface – just enter a query e.g. "trapd00r/LS_COLORS"
 like in the picture below, to find zshrc with references to this plugin, and
 ensure that you activate the "*in this repository*" variant of the search:
 
-![Starting search](https://raw.githubusercontent.com/zdharma/zinit-configs/img/srch.png)
+![Starting search](https://raw.githubusercontent.com/zdharma-continuum/zinit-configs/img/srch.png)
 
 Then, results should appear like below:
 
-![Search results](https://raw.githubusercontent.com/zdharma/zinit-configs/img/srch-rslt.png)
+![Search results](https://raw.githubusercontent.com/zdharma-continuum/zinit-configs/img/srch-rslt.png)
 
 ## OR ...
 
@@ -96,7 +96,7 @@ git clone 'https://github.com/zdharma-continuum/zinit-configs'
 
 ```sh
 # Then, install this repo
-zinit load zdharma/zinit-configs
+zinit load zdharma-continuum/zinit-configs
 # Run the command
 zinit-configs
 ```
