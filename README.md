@@ -44,7 +44,7 @@ You might choose to install any of them via zinit:
 
 ### fzf<a name="fzf"></a>
 
-```
+```zsh
 zinit for \
     as"command" \
     from"gh-r" \
@@ -71,18 +71,15 @@ Keep in mind you will need a few Gb of free space to store docker images.
 To try a configuration, you have to clone this repository and execute a `run.sh` script:
 
 ```zsh
-# Clone repository with configurations
 git clone https://github.com/zdharma-continuum/zinit-configs
-# Run the configuration picker
-./zinit-configs/run.sh
+cd zinit-configs
+./run.sh
 ```
 
 Or you can install this repository as a `zsh` plugin!
 
 ```zsh
-# Then, install this repo
 zinit load zdharma-continuum/zinit-configs
-# Run the command
 zinit-configs
 ```
 
