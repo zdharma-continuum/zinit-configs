@@ -80,7 +80,7 @@ Or you can install this repository as a `zsh` plugin!
 
 ```zsh
 zinit load zdharma-continuum/zinit-configs
-zinit-configs
+zinit configs
 ```
 
 Now you will have to wait for a few minutes, while the required environment is being installed into

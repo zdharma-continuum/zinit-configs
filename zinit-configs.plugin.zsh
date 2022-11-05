@@ -1,5 +1,5 @@
 #!/usr/bin/env zsh
-# -*- mode: sh; sh-indentation: 4; sh-basic-offset: 4; -*-
+# -*- mode: sh; sh-indentation: 2; sh-basic-offset: 2; -*-
 
 # Copyright (c) 2020 Sebastian Gniazdowski
 # License MIT
@@ -12,12 +12,12 @@
 CURRENT_DIR=${0:a:h}
 
 zinit-configs-cmd() {
-    "${CURRENT_DIR}"/run.sh
+  "${CURRENT_DIR}"/run.sh
 }
 
 # The subcommand `scope'.
 @zinit-register-annex "zinit-configs" \
-    subcommand:configs \
-    zinit-configs-cmd
+  subcommand:configs \
+  zinit-configs-cmd
 
-# vim:ft=zsh:tw=80:sw=4:sts=4:noet
+# vim:ft=zsh:tw=80:sw=2:sts=2:noet

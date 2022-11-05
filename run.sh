@@ -22,8 +22,8 @@ FOLDER_LOWERCASE="${(L)FOLDER}"
 docker build \
     --build-arg ZINIT_CONFIG="${FOLDER}" \
     --build-arg TERM="${TERM}" \
-    --tag "zinit-configs/${FOLDER_LOWERCASE}" \
+    --tag "zinit-configs/$(basename ${FOLDER_LOWERCASE})" \
     "${0:a:h}"
 
 # Run a container
-docker run --interactive --tty zinit-configs/"${FOLDER_LOWERCASE}"
+docker run --interactive --tty zinit-configs/$(basename "${FOLDER_LOWERCASE}")
