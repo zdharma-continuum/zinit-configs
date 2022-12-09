@@ -16,7 +16,7 @@ zinit-configs-cmd() {
 }
 
 # The subcommand `scope'.
-@zinit-register-annex "zinit-configs" \
+@zi::register-annex "zinit-configs" \
   subcommand:configs \
   zinit-configs-cmd
 
