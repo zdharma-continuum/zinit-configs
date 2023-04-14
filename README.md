@@ -14,9 +14,8 @@
 
 ## Searching the repository<a name="searching-the-repository"></a>
 
-Use the Github search interface – just enter a query (i.e., `trapd00r/LS_COLORS` like in the picture
-below, to find zshrc with references to this plugin, and ensure that you activate the "*in this
-repository*" variant of the search:
+Use the Github search interface – just enter a query (i.e., `trapd00r/LS_COLORS` like in the picture below, to find
+zshrc with references to this plugin, and ensure that you activate the "*in this repository*" variant of the search:
 
 ![Starting search](https://raw.githubusercontent.com/zdharma-continuum/zinit-configs/img/srch.png)
 
@@ -30,17 +29,15 @@ Open a PR
 
 ## The repository structure<a name="the-repository-structure"></a>
 
-The structure of the repository is very simple: in its main directory there are directories located,
-named after the user-names of the submitting users. In those directories there are the zshrc files
-that the user decided to share.
+The structure of the repository is very simple: in its main directory there are directories located, named after the
+user-names of the submitting users. In those directories there are the zshrc files that the user decided to share.
 
 ### Requirements<a name="requirements"></a>
 
-You should have [docker](https://docs.docker.com/install/) and `zsh` installed to use this
-functionality.
+You should have [docker](https://docs.docker.com/install/) and `zsh` installed to use this functionality.
 
-[fzf](https://github.com/junegunn/fzf) or [fzy](https://github.com/jhawthorn/fzy) in your `$PATH`.
-You might choose to install any of them via zinit:
+[fzf](https://github.com/junegunn/fzf) or [fzy](https://github.com/jhawthorn/fzy) in your `$PATH`. You might choose to
+install any of them via zinit:
 
 ### fzf<a name="fzf"></a>
 
@@ -83,6 +80,5 @@ zinit load zdharma-continuum/zinit-configs
 zinit configs
 ```
 
-Now you will have to wait for a few minutes, while the required environment is being installed into
-the docker image. The next time you will want to try a configuration, loading it will take less
-time.
+Now you will have to wait for a few minutes, while the required environment is being installed into the docker image.
+The next time you will want to try a configuration, loading it will take less time.

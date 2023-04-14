@@ -1,4 +1,4 @@
-# [numToStr](https://github.com/numToStr) zinit configuration 
+# [numToStr](https://github.com/numToStr) zinit configuration
 
 ## Load times
 
@@ -37,5 +37,5 @@ Total: 0.146 sec
 
 ## Questions?
 
-Open an issue in [zdharma-continuum/zinit-configs](https://github.com/zdharma-continuum/zinit-configs) if
-you find a bug or a question.
+Open an issue in [zdharma-continuum/zinit-configs](https://github.com/zdharma-continuum/zinit-configs) if you find a bug
+or a question.
