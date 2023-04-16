@@ -1,4 +1,4 @@
-# [vladdoster](https://github.com/vladdoster) zinit configuration 
+# [vladdoster](https://github.com/vladdoster) zinit configuration
 
 ## Features
 
@@ -54,5 +54,4 @@ Total: 0.085 sec
 
 ## Questions?
 
-Open an issue in https://github.com/vladdoster/dotfiles if
-you find a bug, have a feature request, or a question.
+Open an issue in https://github.com/vladdoster/dotfiles if you find a bug, have a feature request, or a question.
